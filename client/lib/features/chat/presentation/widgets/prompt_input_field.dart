@@ -1,4 +1,5 @@
 import 'package:client/features/chat/presentation/blocs/chat_bloc/chat_bloc.dart';
+import 'package:client/features/chat/presentation/widgets/animated_texthint.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -11,7 +12,7 @@ class PromptInputField extends StatefulWidget {
 
 class _PromptInputFieldState extends State<PromptInputField> {
   final TextEditingController _controller = TextEditingController();
-   bool _hasText =false;
+  bool _hasText = false;
 
   void _sendMessage() {
     if (_controller.text.isNotEmpty) {
@@ -19,11 +20,10 @@ class _PromptInputFieldState extends State<PromptInputField> {
       context.read<ChatBloc>().add(SendChatEvent(_controller.text));
       _controller.clear();
       setState(() {
-        _hasText=false;
+        _hasText = false;
       });
     }
   }
-
 
   @override
   void initState() {
@@ -54,15 +54,27 @@ class _PromptInputFieldState extends State<PromptInputField> {
       child: Row(
         children: [
           Expanded(
-            child: TextField(
-              controller: _controller,
-              textInputAction: TextInputAction.send,
-              onSubmitted: (_) => _sendMessage(),
-              maxLines: null,
-              decoration: const InputDecoration(
-                hintText: "Hello! How can I help you?",
-                border: InputBorder.none,
-              ),
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  child: TextField(
+                    controller: _controller,
+                    textInputAction: TextInputAction.send,
+                    onSubmitted: (_) => _sendMessage(),
+                    maxLines: null,
+                    decoration: const InputDecoration(
+                      hintText: "",
+                      border: InputBorder.none,
+                    ),
+                  ),
+                ),
+                _hasText ==false ?
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: AnimatedHint(),
+                ): SizedBox()
+              ],
             ),
           ),
           AnimatedSwitcher(
@@ -71,16 +83,22 @@ class _PromptInputFieldState extends State<PromptInputField> {
                 ScaleTransition(scale: animation, child: child),
             child: _hasText
                 ? Container(
-                  decoration: BoxDecoration(color: Colors.white12,shape: BoxShape.circle),
-                  child: IconButton(
+                    decoration: BoxDecoration(
+                      color: Colors.white12,
+                      shape: BoxShape.circle,
+                    ),
+                    child: IconButton(
                       key: const ValueKey("send"),
-                      icon: const Icon(Icons.arrow_upward_rounded, color: Colors.blue,size: 20,),
+                      icon: const Icon(
+                        Icons.arrow_upward_rounded,
+                        color: Colors.blue,
+                        size: 20,
+                      ),
                       onPressed: _sendMessage,
                     ),
-                )
+                  )
                 : const SizedBox(width: 40),
           ),
-          
         ],
       ),
     );

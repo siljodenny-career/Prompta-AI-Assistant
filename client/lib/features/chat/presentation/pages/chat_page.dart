@@ -59,7 +59,7 @@ class _ChatPageState extends State<ChatPage> {
             });
 
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Container(
                 width: ScreenConfig.screenWidth,
                 height: ScreenConfig.screenHeight,
@@ -69,19 +69,17 @@ class _ChatPageState extends State<ChatPage> {
                 child: Column(
                   children: [
                     Expanded(
-                      child: Container(
-                        //color: Colors.blueAccent,
-                        child: ListView.builder(
-                          controller: _scrollController,
-                          itemCount: state.messages.length,
-                          itemBuilder: (context, index) {
-                            return MessageBubble(
-                              message: state.messages[index],
-                            );
-                          },
-                        ),
+                      child: ListView.builder(
+                        controller: _scrollController,
+                        itemCount: state.messages.length,
+                        itemBuilder: (context, index) {
+                          return MessageBubble(
+                            message: state.messages[index],
+                          );
+                        },
                       ),
                     ),
+                    SizedBox(height: 12,),
                     PromptInputField(),
                   ],
                 ),
