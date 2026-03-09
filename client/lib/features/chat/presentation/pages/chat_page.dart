@@ -38,8 +38,9 @@ class _ChatPageState extends State<ChatPage> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text("Prompta"),
-          backgroundColor:AppTheme.darkTheme.scaffoldBackgroundColor,
-          scrolledUnderElevation: 0.0, // <-- Prevents the color changing when scrolling
+          backgroundColor: AppTheme.darkTheme.scaffoldBackgroundColor,
+          scrolledUnderElevation:
+              0.0, // <-- Prevents the color changing when scrolling
           actions: const [],
           leading: InkWell(
             borderRadius: BorderRadius.circular(30),
@@ -51,11 +52,11 @@ class _ChatPageState extends State<ChatPage> {
         ),
         body: BlocBuilder<ChatBloc, ChatState>(
           builder: (context, state) {
-              // By calling this post-frame, we guarantee the ListView has already painted
-              // the newest text chunk layout before attempting to scroll to the newest bottom
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                _scrollToBottom();
-              });
+            // By calling this post-frame, we guarantee the ListView has already painted
+            // the newest text chunk layout before attempting to scroll to the newest bottom
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _scrollToBottom();
+            });
 
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -74,24 +75,13 @@ class _ChatPageState extends State<ChatPage> {
                           controller: _scrollController,
                           itemCount: state.messages.length,
                           itemBuilder: (context, index) {
-                            return MessageBubble(message: state.messages[index]);
+                            return MessageBubble(
+                              message: state.messages[index],
+                            );
                           },
                         ),
                       ),
                     ),
-                    if (state.isLoading)
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2,),
-                          ),
-                        ),
-                      ),
-              
                     PromptInputField(),
                   ],
                 ),

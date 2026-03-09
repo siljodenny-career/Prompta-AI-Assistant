@@ -1,5 +1,6 @@
 import 'package:client/features/chat/domain/entities/message.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 class MessageBubble extends StatelessWidget {
   final Message message;
@@ -13,9 +14,7 @@ class MessageBubble extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         decoration: BoxDecoration(
-          color: message.isUser
-              ? Colors.white
-              : Colors.white12,
+          color: message.isUser ? Colors.white : Colors.white12,
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(16),
             topRight: const Radius.circular(16),
@@ -24,13 +23,25 @@ class MessageBubble extends StatelessWidget {
             bottomRight: Radius.circular(message.isUser ? 0 : 16),
           ),
         ),
-        child: Text(
-          message.text,
-          style: TextStyle(
-            color: message.isUser ? Colors.black : Colors.white,
-            fontSize: 16,
-          ),
-        ),
+        child: message.text.isNotEmpty
+            ? Text(
+                message.text,
+                style: TextStyle(
+                  color: message.isUser ? Colors.black : Colors.white,
+                  fontSize: 16,
+                ),
+              )
+            : Align(
+                alignment: Alignment.centerLeft,
+                child: Lottie.asset(
+                  "animations/loading.json",
+                  addRepaintBoundary: true,
+                  width: 60,
+                  height: 60,
+                  repeat: true,
+                  animate: true,
+                ),
+              ),
       ),
     );
   }
