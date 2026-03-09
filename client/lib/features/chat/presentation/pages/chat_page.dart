@@ -5,6 +5,7 @@ import 'package:client/features/chat/presentation/widgets/prompt_input_field.dar
 import 'package:client/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -36,20 +37,63 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                ),
+                child: Text(
+                  "Prompta AI",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                  ),
+                ),
+              ),
+
+              ListTile(
+                leading: Icon(Icons.chat),
+                title: Text("New Chat"),
+                onTap: () {},
+              ),
+
+              ListTile(
+                leading: Icon(Icons.history),
+                title: Text("Chat History"),
+                onTap: () {},
+              ),
+
+              ListTile(
+                leading: Icon(Icons.settings),
+                title: Text("Settings"),
+                onTap: () {},
+              ),
+            ],
+          ),
+        ),
         appBar: AppBar(
-          title: const Text("Prompta"),
+          leadingWidth: 60,
+          title: Row(
+            children: [
+              Lottie.asset(
+                "animations/loading.json",
+                width: 40,
+                height: 40,
+                repeat: true,
+                animate: true,
+              ),
+              const Text("Prompta"),
+            ],
+          ),
           backgroundColor: AppTheme.darkTheme.scaffoldBackgroundColor,
           scrolledUnderElevation:
               0.0, // <-- Prevents the color changing when scrolling
           actions: const [],
-          leading: InkWell(
-            borderRadius: BorderRadius.circular(30),
-            onTap: () {
-              print('menu clicked');
-            },
-            child: const Icon(Icons.menu),
-          ),
         ),
+
         body: BlocBuilder<ChatBloc, ChatState>(
           builder: (context, state) {
             // By calling this post-frame, we guarantee the ListView has already painted
@@ -79,7 +123,9 @@ class _ChatPageState extends State<ChatPage> {
                         },
                       ),
                     ),
-                    SizedBox(height: 12,),
+                    SizedBox(
+                      height: 12,
+                    ),
                     PromptInputField(),
                   ],
                 ),
