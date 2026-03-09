@@ -8,7 +8,7 @@ class AnimatedHint extends StatelessWidget {
   Widget build(BuildContext context) {
     return DefaultTextStyle(
       style: TextStyle(
-        fontSize: 18,
+        fontSize: 16,
         color: Colors.grey,
       ),
       child: AnimatedTextKit(
@@ -17,7 +17,6 @@ class AnimatedHint extends StatelessWidget {
           TypewriterAnimatedText(
             'Ask anything...',
             speed: Duration(milliseconds: 120),
-            
           ),
           TypewriterAnimatedText(
             'Start a conversation...',

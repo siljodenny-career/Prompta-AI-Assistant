@@ -56,24 +56,24 @@ class _PromptInputFieldState extends State<PromptInputField> {
           Expanded(
             child: Stack(
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                  child: TextField(
-                    controller: _controller,
-                    textInputAction: TextInputAction.send,
-                    onSubmitted: (_) => _sendMessage(),
-                    maxLines: null,
-                    decoration: const InputDecoration(
-                      hintText: "",
-                      border: InputBorder.none,
-                    ),
+                TextField(
+                  textCapitalization: TextCapitalization.words,
+                  controller: _controller,
+                  textInputAction: TextInputAction.send,
+                  onSubmitted: (_) => _sendMessage(),
+                  maxLines: null,
+                  decoration: const InputDecoration(
+                    hintText: "",
+                    border: InputBorder.none,
                   ),
                 ),
-                _hasText ==false ?
-                Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: AnimatedHint(),
-                ): SizedBox()
+                _hasText == false
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 12),
+                        child: AnimatedHint(),
+                      )
+                    : SizedBox(),
+                
               ],
             ),
           ),
