@@ -78,12 +78,15 @@ class _ChatPageState extends State<ChatPage> {
           leadingWidth: 60,
           title: Row(
             children: [
-              Lottie.asset(
-                "animations/loading.json",
-                width: 40,
-                height: 40,
-                repeat: true,
-                animate: true,
+              Opacity(
+                opacity: 1,
+                child: Lottie.asset(
+                  "animations/loading.json",
+                  width: 50,
+                  
+                  repeat: true,
+                  animate: true,
+                ),
               ),
               const Text("Prompta"),
             ],
@@ -113,15 +116,55 @@ class _ChatPageState extends State<ChatPage> {
                 child: Column(
                   children: [
                     Expanded(
-                      child: ListView.builder(
-                        controller: _scrollController,
-                        itemCount: state.messages.length,
-                        itemBuilder: (context, index) {
-                          return MessageBubble(
-                            message: state.messages[index],
-                          );
-                        },
-                      ),
+                      child: state.messages.isNotEmpty
+                          ? ListView.builder(
+                              controller: _scrollController,
+                              itemCount: state.messages.length,
+                              itemBuilder: (context, index) {
+                                return MessageBubble(
+                                  message: state.messages[index],
+                                );
+                              },
+                            )
+                          : Stack(
+                            alignment: AlignmentGeometry.center,
+                              children: [
+                                Opacity(
+                                  opacity: 0.3,
+                                  child: Lottie.asset(
+                                    "animations/loading.json",
+                                    width: ScreenConfig.screenWidth*0.4,
+                                    //height: 100,
+                                    repeat: true,
+                                    animate: true,
+                                    filterQuality: FilterQuality.high,
+                                    
+                                  ),
+                                ),
+                                Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "Start with your first prompt",
+                                        style: TextStyle(
+                                          color: Colors.white60,
+                                          fontSize: 24,
+                                        ),
+                                      ),
+                                      Text(
+                                        "Ask anything, generate ideas, or explore with AI",
+                                        style: TextStyle(
+                                          color: Colors.white30,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                
+                              ],
+                            ),
                     ),
                     SizedBox(
                       height: 12,
