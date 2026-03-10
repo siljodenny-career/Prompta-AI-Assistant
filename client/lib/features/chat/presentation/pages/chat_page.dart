@@ -78,14 +78,14 @@ class _ChatPageState extends State<ChatPage> {
           leadingWidth: 60,
           title: Row(
             children: [
-              Opacity(
-                opacity: 1,
+              ColorFiltered(
+                colorFilter: ColorFilter.mode(Colors.blue, BlendMode.srcATop),
                 child: Lottie.asset(
-                  "animations/loading.json",
+                  "animations/infinity_loading.json",
                   width: 50,
-                  
                   repeat: true,
                   animate: true,
+                  frameRate: FrameRate(30),
                 ),
               ),
               const Text("Prompta"),
@@ -127,18 +127,18 @@ class _ChatPageState extends State<ChatPage> {
                               },
                             )
                           : Stack(
-                            alignment: AlignmentGeometry.center,
+                              alignment: AlignmentGeometry.center,
                               children: [
                                 Opacity(
                                   opacity: 0.3,
                                   child: Lottie.asset(
-                                    "animations/loading.json",
-                                    width: ScreenConfig.screenWidth*0.4,
+                                    "animations/infinity_loading.json",
+                                    width: ScreenConfig.screenWidth * 0.4,
                                     //height: 100,
                                     repeat: true,
                                     animate: true,
+                                    frameRate: FrameRate(120),
                                     filterQuality: FilterQuality.high,
-                                    
                                   ),
                                 ),
                                 Center(
@@ -162,7 +162,6 @@ class _ChatPageState extends State<ChatPage> {
                                     ],
                                   ),
                                 ),
-                                
                               ],
                             ),
                     ),

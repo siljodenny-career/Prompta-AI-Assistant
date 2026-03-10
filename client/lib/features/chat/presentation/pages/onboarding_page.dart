@@ -4,6 +4,7 @@ import 'package:client/features/chat/presentation/pages/chat_page.dart';
 import 'package:client/features/chat/presentation/widgets/basic_features.dart';
 import 'package:client/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 class OnboardingPage extends StatelessWidget {
   const OnboardingPage({super.key});
@@ -26,14 +27,28 @@ class OnboardingPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Welcome to \nPrompta',
-                style: TextStyle(
-                  fontSize: textTheme.headlineLarge?.fontSize ?? 30,
-                  fontWeight:
-                      textTheme.headlineLarge?.fontWeight ?? FontWeight.w900,
-                  color: textTheme.headlineLarge?.color ?? Colors.white,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'Welcome to \nPrompta',
+                    style: TextStyle(
+                      fontSize: textTheme.headlineLarge?.fontSize ?? 30,
+                      fontWeight:
+                          textTheme.headlineLarge?.fontWeight ??
+                          FontWeight.w900,
+                      color: textTheme.headlineLarge?.color ?? Colors.white,
+                    ),
+                  ),
+                  Lottie.asset(
+                    "animations/infinity_loading.json",
+                    width: ScreenConfig.screenWidth * 0.2,
+                    repeat: true,
+                    animate: true,
+                    frameRate: FrameRate(120),
+                  ),
+                ],
               ),
               SizedBox(height: 5),
               Text(
