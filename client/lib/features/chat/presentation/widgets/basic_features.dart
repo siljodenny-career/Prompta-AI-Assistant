@@ -1,6 +1,7 @@
 import 'package:client/core/theme/app_theme.dart' show AppTheme;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class BasicFeatures extends StatelessWidget {
   final String icon;
@@ -16,7 +17,7 @@ class BasicFeatures extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextTheme textTheme = AppTheme.darkTheme.textTheme;
+ 
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -29,21 +30,19 @@ class BasicFeatures extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: TextStyle(
-                  fontSize: textTheme.headlineMedium?.fontSize ?? 20,
-                  fontWeight:
-                      textTheme.headlineMedium?.fontWeight ?? FontWeight.bold,
-                  color: textTheme.headlineMedium?.color ?? Colors.white,
-                ),
+                style:  GoogleFonts.raleway(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white
+                    ),
               ),
               Text(
                 description,
-                style: TextStyle(
-                  fontSize: textTheme.bodySmall?.fontSize ?? 20,
-                  fontWeight:
-                      textTheme.bodySmall?.fontWeight ?? FontWeight.bold,
-                  color: textTheme.bodySmall?.color ?? Colors.white,
-                ),
+                style: GoogleFonts.raleway(
+                      fontSize: 16,
+                      fontWeight: FontWeight.normal,
+                      color: Colors.white38
+                    ),
               ),
               SizedBox(height: 10,)
             ],

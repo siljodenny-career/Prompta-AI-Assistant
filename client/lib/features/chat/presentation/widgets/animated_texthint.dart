@@ -1,5 +1,6 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AnimatedHint extends StatelessWidget {
   const AnimatedHint({super.key});
@@ -16,14 +17,17 @@ class AnimatedHint extends StatelessWidget {
         animatedTexts: [
           TypewriterAnimatedText(
             'Ask anything...',
+            textStyle: GoogleFonts.raleway(),
             speed: Duration(milliseconds: 120),
           ),
           TypewriterAnimatedText(
             'Start a conversation...',
+            textStyle: GoogleFonts.raleway(),
             speed: Duration(milliseconds: 120),
           ),
           TypewriterAnimatedText(
             'Hello! How can I help you?',
+            textStyle: GoogleFonts.raleway(),
             speed: Duration(milliseconds: 120),
           ),
         ],

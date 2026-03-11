@@ -2,6 +2,7 @@ import 'package:client/features/chat/presentation/blocs/chat_bloc/chat_bloc.dart
 import 'package:client/features/chat/presentation/widgets/animated_texthint.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class PromptInputField extends StatefulWidget {
   const PromptInputField({super.key});
@@ -57,6 +58,7 @@ class _PromptInputFieldState extends State<PromptInputField> {
             child: Stack(
               children: [
                 TextField(
+                  style: GoogleFonts.raleway(color: Colors.white60),
                   textCapitalization: TextCapitalization.words,
                   controller: _controller,
                   textInputAction: TextInputAction.send,
@@ -64,6 +66,7 @@ class _PromptInputFieldState extends State<PromptInputField> {
                   maxLines: null,
                   decoration: const InputDecoration(
                     hintText: "",
+                    
                     border: InputBorder.none,
                   ),
                 ),

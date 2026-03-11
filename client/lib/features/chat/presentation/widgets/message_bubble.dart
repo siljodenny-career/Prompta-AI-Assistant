@@ -1,5 +1,6 @@
 import 'package:client/features/chat/domain/entities/message.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 
 class MessageBubble extends StatelessWidget {
@@ -26,7 +27,7 @@ class MessageBubble extends StatelessWidget {
         child: message.text.isNotEmpty
             ? Text(
                 message.text,
-                style: TextStyle(
+                style: GoogleFonts.raleway(
                   color: message.isUser ? Colors.black : Colors.white,
                   fontSize: 16,
                 ),

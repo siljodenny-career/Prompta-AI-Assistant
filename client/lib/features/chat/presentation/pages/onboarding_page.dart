@@ -4,6 +4,7 @@ import 'package:client/features/chat/presentation/pages/chat_page.dart';
 import 'package:client/features/chat/presentation/widgets/basic_features.dart';
 import 'package:client/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 
 class OnboardingPage extends StatelessWidget {
@@ -21,46 +22,47 @@ class OnboardingPage extends StatelessWidget {
           height: ScreenConfig.screenHeight,
           padding: EdgeInsets.symmetric(
             horizontal: ScreenConfig.screenWidth * 0.09,
-            vertical: 60,
+            vertical: ScreenConfig.screenWidth * 0.05,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Row(
+              Column(
                 mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Welcome to \nPrompta',
-                    style: TextStyle(
-                      fontSize: textTheme.headlineLarge?.fontSize ?? 30,
-                      fontWeight:
-                          textTheme.headlineLarge?.fontWeight ??
-                          FontWeight.w900,
-                      color: textTheme.headlineLarge?.color ?? Colors.white,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Welcome to \nPrompta',
+                        style: GoogleFonts.raleway(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Lottie.asset(
+                        "animations/infinity_loading.json",
+                        width: ScreenConfig.screenWidth * 0.2,
+                        repeat: true,
+                        animate: true,
+                        frameRate: FrameRate(120),
+                      ),
+                    ],
                   ),
-                  Lottie.asset(
-                    "animations/infinity_loading.json",
-                    width: ScreenConfig.screenWidth * 0.2,
-                    repeat: true,
-                    animate: true,
-                    frameRate: FrameRate(120),
+                  Text(
+                    'This official app is free,syncs your history across devices and brings \nyou the best experience.',
+                    style: GoogleFonts.raleway(
+                      fontSize: 18,
+                      fontWeight: FontWeight.normal,
+                      color: Colors.white60,
+                    ),
                   ),
                 ],
               ),
-              SizedBox(height: 5),
-              Text(
-                'This official app is free,syncs your history across devices and brings \nyou the best experience.',
-                style: TextStyle(
-                  fontSize: textTheme.bodyLarge?.fontSize ?? 30,
-                  fontWeight:
-                      textTheme.bodyLarge?.fontWeight ?? FontWeight.w900,
-                  color: textTheme.bodyLarge?.color ?? Colors.white,
-                ),
-              ),
-              SizedBox(height: 20),
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,

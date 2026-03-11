@@ -5,6 +5,7 @@ import 'package:client/features/chat/presentation/widgets/prompt_input_field.dar
 import 'package:client/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 
 class ChatPage extends StatefulWidget {
@@ -54,7 +55,10 @@ class _ChatPageState extends State<ChatPage> {
                   frameRate: FrameRate(30),
                 ),
               ),
-              const Text("Prompta"),
+              Text(
+                "Prompta",
+                style: GoogleFonts.raleway(),
+              ),
             ],
           ),
           backgroundColor: AppTheme.darkTheme.scaffoldBackgroundColor,
@@ -113,14 +117,15 @@ class _ChatPageState extends State<ChatPage> {
                                     children: [
                                       Text(
                                         "Start with your first prompt",
-                                        style: TextStyle(
+                                        style: GoogleFonts.raleway(
                                           color: Colors.white60,
                                           fontSize: 24,
                                         ),
                                       ),
+
                                       Text(
                                         "Ask anything, generate ideas, or explore with AI",
-                                        style: TextStyle(
+                                        style: GoogleFonts.raleway(
                                           color: Colors.white30,
                                           fontSize: 12,
                                         ),
@@ -147,172 +152,172 @@ class _ChatPageState extends State<ChatPage> {
 
   //SidebarMenu widget
 
-  Widget _sidebarmenu(){
+  Widget _sidebarmenu() {
     return Drawer(
-          child: Column(
-            children: [
-              Expanded(
-                child: ListView(
-                  padding: EdgeInsets.zero,
+      child: Column(
+        children: [
+          DrawerHeader(
+            duration: Duration(milliseconds: 200),
+            decoration: BoxDecoration(),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 5),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    DrawerHeader(
-                      duration: Duration(milliseconds: 200),
-                      decoration: BoxDecoration(),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(height: 5),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              IconButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                icon: Icon(Icons.window_rounded),
-                              ),
-
-                              Expanded(
-                                child: AnimatedSwitcher(
-                                  duration: Duration(milliseconds: 300),
-                                  transitionBuilder: (child, animation) {
-                                    return FadeTransition(
-                                      opacity: animation,
-                                      child: SizeTransition(
-                                        sizeFactor: animation,
-                                        axis: Axis.horizontal,
-                                        axisAlignment: -1,
-                                        child: child,
-                                      ),
-                                    );
-                                  },
-                                  child: _hasClicked == true
-                                      ? Container(
-                                          margin: EdgeInsets.symmetric(
-                                            horizontal: 10,
-                                          ),
-                                          height: 30,
-                                          child: TextField(
-                                            style: TextStyle(fontSize: 14),
-                                            decoration: InputDecoration(
-                                              hintText: "Search",
-                                              hintStyle: TextStyle(
-                                                fontSize: 14,
-                                              ),
-                                              prefixIcon: Icon(
-                                                Icons.search,
-                                                size: 18,
-                                              ),
-                                              contentPadding:
-                                                  EdgeInsets.symmetric(
-                                                    vertical: 0,
-                                                  ),
-
-                                              filled: true,
-                                              fillColor: Colors.white12,
-
-                                              border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                      20,
-                                                    ),
-                                                borderSide: BorderSide.none,
-                                              ),
-                                            ),
-                                          ),
-                                        )
-                                      : null,
-                                ),
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    _hasClicked = !_hasClicked;
-                                  });
-                                },
-                                icon: Icon(Icons.search_rounded),
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                icon: Icon(Icons.edit_square),
-                              ),
-                            ],
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Prompta",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 24,
-                                ),
-                              ),
-                              Text(
-                                "AI powered assistant ",
-                                style: TextStyle(
-                                  color: Colors.white38,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    ListTile(
-                      leading: Icon(Icons.forum_outlined),
-                      title: Text(
-                        "New Chat",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      onTap: () {
+                    IconButton(
+                      onPressed: () {
                         Navigator.pop(context);
                       },
+                      icon: Icon(Icons.window_rounded),
                     ),
 
-                    ListTile(
-                      leading: Icon(Icons.history),
-                      title: Text(
-                        "Chat History",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      onTap: () {},
-                    ),
+                    Expanded(
+                      child: AnimatedSwitcher(
+                        duration: Duration(milliseconds: 300),
+                        transitionBuilder: (child, animation) {
+                          return FadeTransition(
+                            opacity: animation,
+                            child: SizeTransition(
+                              sizeFactor: animation,
+                              axis: Axis.horizontal,
+                              axisAlignment: -1,
+                              child: child,
+                            ),
+                          );
+                        },
+                        child: _hasClicked == true
+                            ? Container(
+                                margin: EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                ),
+                                height: 30,
+                                child: TextField(
+                                  style: TextStyle(fontSize: 14),
+                                  decoration: InputDecoration(
+                                    hintText: "Search",
+                                    hintStyle: GoogleFonts.raleway(
+                                      fontSize: 14,
+                                    ),
+                                    prefixIcon: Icon(
+                                      Icons.search,
+                                      size: 18,
+                                    ),
+                                    contentPadding: EdgeInsets.symmetric(
+                                      vertical: 0,
+                                    ),
 
-                    ListTile(
-                      leading: Icon(Icons.settings),
-                      title: Text(
-                        "Settings",
-                        style: TextStyle(fontSize: 16),
+                                    filled: true,
+                                    fillColor: Colors.white12,
+
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(
+                                        20,
+                                      ),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : null,
                       ),
-                      onTap: () {},
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _hasClicked = !_hasClicked;
+                        });
+                      },
+                      icon: Icon(Icons.search_rounded),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: Icon(Icons.edit_square),
                     ),
                   ],
                 ),
-              ),
-              Spacer(),
-              Divider(),
-              Padding(
-                padding: EdgeInsets.all(12),
-                child: Row(
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CircleAvatar(
-                      radius: 18,
-                      backgroundColor: Colors.black,
-                      child: Center(child: Text("SD")),
+                    Text(
+                      "Prompta",
+                      style: GoogleFonts.raleway(
+                        color: Colors.white,
+                        fontSize: 24,
+                      ),
                     ),
-                    SizedBox(width: 10),
-                    Text("SILJO DENNY"),
+                    Text(
+                      "AI powered assistant ",
+                      style: GoogleFonts.raleway(
+                        color: Colors.white38,
+                        fontSize: 14,
+                      ),
+                    ),
                   ],
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        );
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                ListTile(
+                  leading: Icon(Icons.forum_outlined),
+                  title: Text(
+                    "New Chat",
+                    style: GoogleFonts.raleway(fontSize: 16),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+
+                ListTile(
+                  leading: Icon(Icons.history),
+                  title: Text(
+                    "Chat History",
+                    style: GoogleFonts.raleway(fontSize: 16),
+                  ),
+                  onTap: () {},
+                ),
+
+                ListTile(
+                  leading: Icon(Icons.settings),
+                  title: Text(
+                    "Settings",
+                    style: GoogleFonts.raleway(fontSize: 16),
+                  ),
+                  onTap: () {},
+                ),
+              ],
+            ),
+          ),
+          Spacer(),
+          Divider(),
+          Padding(
+            padding: EdgeInsets.all(12),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 18,
+                  backgroundColor: Colors.black,
+                  child: Center(child: Text("SD")),
+                ),
+                SizedBox(width: 10),
+                Text(
+                  "SILJO DENNY",
+                  style: GoogleFonts.raleway(fontSize: 16),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
