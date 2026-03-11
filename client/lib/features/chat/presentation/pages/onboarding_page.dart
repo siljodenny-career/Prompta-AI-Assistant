@@ -3,15 +3,14 @@ import 'package:client/core/components/screen_config.dart';
 import 'package:client/features/chat/presentation/pages/chat_page.dart';
 import 'package:client/features/chat/presentation/widgets/basic_features.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lottie/lottie.dart';
 
 class OnboardingPage extends StatelessWidget {
   const OnboardingPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-
     return SafeArea(
       child: Scaffold(
         body: Container(
@@ -42,17 +41,15 @@ class OnboardingPage extends StatelessWidget {
                           color: Colors.white,
                         ),
                       ),
-                      Lottie.asset(
-                        "animations/infinity_loading.json",
-                        width: ScreenConfig.screenWidth * 0.2,
-                        repeat: true,
-                        animate: true,
-                        frameRate: FrameRate(120),
+                      SizedBox(width: 30,),
+                      SvgPicture.asset(
+                        'assets/images/prompt_icon.svg',
+                        width: 60,
                       ),
                     ],
                   ),
                   Text(
-                    'This official app is free,syncs your history across devices and brings \nyou the best experience.',
+                    'This official app is free,syncs your history across devices and brings you the best experience.',
                     style: GoogleFonts.raleway(
                       fontSize: 18,
                       fontWeight: FontWeight.normal,

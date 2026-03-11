@@ -5,6 +5,7 @@ import 'package:client/features/chat/presentation/widgets/prompt_input_field.dar
 import 'package:client/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 
@@ -44,13 +45,18 @@ class _ChatPageState extends State<ChatPage> {
         appBar: AppBar(
           leadingWidth: 60,
           title: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Image.asset(
-                'images/prompt_icon.png',
-                width: 30,
+              Transform.translate(
+                offset: Offset(0, 10),
+                child: SvgPicture.asset(
+                  "assets/images/prompt_icon.svg",
+                  width: 40,
+                ),
               ),
-              SizedBox(width: 5,),
+              SizedBox(
+                width: 10,
+              ),
               Text(
                 "Prompta",
                 style: GoogleFonts.raleway(),
