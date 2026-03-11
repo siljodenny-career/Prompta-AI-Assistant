@@ -44,17 +44,13 @@ class _ChatPageState extends State<ChatPage> {
         appBar: AppBar(
           leadingWidth: 60,
           title: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              ColorFiltered(
-                colorFilter: ColorFilter.mode(Colors.blue, BlendMode.srcATop),
-                child: Lottie.asset(
-                  "animations/infinity_loading.json",
-                  width: 50,
-                  repeat: true,
-                  animate: true,
-                  frameRate: FrameRate(30),
-                ),
+              Image.asset(
+                'images/prompt_icon.png',
+                width: 30,
               ),
+              SizedBox(width: 5,),
               Text(
                 "Prompta",
                 style: GoogleFonts.raleway(),
