@@ -2,7 +2,6 @@ import 'package:client/core/components/custom_button.dart';
 import 'package:client/core/components/screen_config.dart';
 import 'package:client/features/chat/presentation/pages/chat_page.dart';
 import 'package:client/features/chat/presentation/widgets/basic_features.dart';
-import 'package:client/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
@@ -12,7 +11,6 @@ class OnboardingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextTheme textTheme = AppTheme.darkTheme.textTheme;
 
     return SafeArea(
       child: Scaffold(

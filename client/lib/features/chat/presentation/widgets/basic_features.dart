@@ -1,4 +1,3 @@
-import 'package:client/core/theme/app_theme.dart' show AppTheme;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
