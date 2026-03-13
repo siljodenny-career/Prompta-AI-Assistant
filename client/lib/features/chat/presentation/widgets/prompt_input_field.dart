@@ -47,7 +47,7 @@ class _PromptInputFieldState extends State<PromptInputField> {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.fromLTRB(10, 10, 10, 20),
-      padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 4),
+      padding: const EdgeInsets.fromLTRB(25, 0, 6, 0),
       decoration: BoxDecoration(
         color: Colors.white12,
         borderRadius: BorderRadius.circular(40),
@@ -57,6 +57,15 @@ class _PromptInputFieldState extends State<PromptInputField> {
           Expanded(
             child: Stack(
               children: [
+                _hasText == false
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 2.0,
+                          vertical: 14,
+                        ),
+                        child: AnimatedHint(),
+                      )
+                    : SizedBox(),
                 TextField(
                   style: GoogleFonts.raleway(color: Colors.white60),
                   textCapitalization: TextCapitalization.words,
@@ -64,19 +73,16 @@ class _PromptInputFieldState extends State<PromptInputField> {
                   textInputAction: TextInputAction.send,
                   onSubmitted: (_) => _sendMessage(),
                   maxLines: null,
+                  autocorrect: true,
+                  cursorColor: Colors.blue,
+                  cursorHeight: 20,
+                  
                   decoration: const InputDecoration(
                     hintText: "",
-                    
+                    alignLabelWithHint: true,
                     border: InputBorder.none,
                   ),
                 ),
-                _hasText == false
-                    ? Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 12),
-                        child: AnimatedHint(),
-                      )
-                    : SizedBox(),
-                
               ],
             ),
           ),
@@ -86,6 +92,7 @@ class _PromptInputFieldState extends State<PromptInputField> {
                 ScaleTransition(scale: animation, child: child),
             child: _hasText
                 ? Container(
+                    width: 36,
                     decoration: BoxDecoration(
                       color: Colors.white12,
                       shape: BoxShape.circle,
@@ -95,12 +102,12 @@ class _PromptInputFieldState extends State<PromptInputField> {
                       icon: const Icon(
                         Icons.arrow_upward_rounded,
                         color: Colors.blue,
-                        size: 20,
+                        size: 18,
                       ),
                       onPressed: _sendMessage,
                     ),
                   )
-                : const SizedBox(width: 40),
+                : const SizedBox(width: 2),
           ),
         ],
       ),
