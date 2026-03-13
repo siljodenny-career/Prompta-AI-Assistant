@@ -93,7 +93,7 @@ class _ChatPageState extends State<ChatPage> {
                                       "Start with your first prompt",
                                       style: GoogleFonts.raleway(
                                         color: Colors.white60,
-                                        fontSize: 20,
+                                        fontSize: ScreenConfig.screenWidth/20,
                                       ),
                                     ),
 
