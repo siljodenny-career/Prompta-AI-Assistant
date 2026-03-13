@@ -73,13 +73,13 @@ class _ChatPageState extends State<ChatPage> {
                               },
                             )
                           : Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Opacity(
                                   opacity: 0.3,
                                   child: Lottie.asset(
                                     "assets/animations/infinity_loading.json",
-                                    width: ScreenConfig.screenWidth * 0.4,
+                                    width: ScreenConfig.screenWidth * 0.2,
                                     //height: 100,
                                     repeat: true,
                                     animate: true,
@@ -93,10 +93,10 @@ class _ChatPageState extends State<ChatPage> {
                                       "Start with your first prompt",
                                       style: GoogleFonts.raleway(
                                         color: Colors.white60,
-                                        fontSize: ScreenConfig.screenWidth/20,
+                                        fontSize: 20,
                                       ),
                                     ),
-
+                                
                                     Text(
                                       "Ask anything, generate ideas, or explore with AI",
                                       style: GoogleFonts.raleway(
