@@ -42,33 +42,7 @@ class _ChatPageState extends State<ChatPage> {
     return SafeArea(
       child: Scaffold(
         drawer: _sidebarmenu(),
-        appBar: AppBar(
-          leadingWidth: 60,
-          title: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Transform.translate(
-                offset: Offset(0, 10),
-                child: SvgPicture.asset(
-                  "assets/images/prompt_icon.svg",
-                  width: 40,
-                ),
-              ),
-              SizedBox(
-                width: 10,
-              ),
-              Text(
-                "Prompta",
-                style: GoogleFonts.raleway(),
-              ),
-            ],
-          ),
-          backgroundColor: AppTheme.darkTheme.scaffoldBackgroundColor,
-          scrolledUnderElevation:
-              0.0, // <-- Prevents the color changing when scrolling
-          actions: const [],
-        ),
-
+        appBar: _appBar(),
         body: BlocBuilder<ChatBloc, ChatState>(
           builder: (context, state) {
             // By calling this post-frame, we guarantee the ListView has already painted
@@ -269,7 +243,7 @@ class _ChatPageState extends State<ChatPage> {
               padding: EdgeInsets.zero,
               children: [
                 ListTile(
-                  leading: Icon(Icons.forum_outlined),
+                  leading: Icon(Icons.chat_bubble_rounded),
                   title: Text(
                     "New Chat",
                     style: GoogleFonts.raleway(fontSize: 16),
@@ -313,13 +287,41 @@ class _ChatPageState extends State<ChatPage> {
                 SizedBox(width: 10),
                 Text(
                   "SILJO DENNY",
-                  style: GoogleFonts.raleway(fontSize: 16),
+                  style: GoogleFonts.raleway(fontSize: 16,color: Colors.white38),
                 ),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  // AppBar Widget
+
+  PreferredSizeWidget _appBar() {
+    return AppBar(
+      leadingWidth: 60,
+      title: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SvgPicture.asset(
+            "assets/images/prompt_icon.svg",
+            width: 40,
+          ),
+          SizedBox(
+            width: 10,
+          ),
+          Text(
+            "Prompta",
+            style: GoogleFonts.raleway(),
+          ),
+        ],
+      ),
+      backgroundColor: AppTheme.darkTheme.scaffoldBackgroundColor,
+      scrolledUnderElevation:
+          0.0, // <-- Prevents the color changing when scrolling
+      actions: const [],
     );
   }
 }
