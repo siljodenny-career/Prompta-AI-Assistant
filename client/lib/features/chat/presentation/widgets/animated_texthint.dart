@@ -26,7 +26,7 @@ class AnimatedHint extends StatelessWidget {
             speed: Duration(milliseconds: 120),
           ),
           TypewriterAnimatedText(
-            'Hello! How can I help you?',
+            'How can I help you?',
             textStyle: GoogleFonts.raleway(),
             speed: Duration(milliseconds: 120),
           ),

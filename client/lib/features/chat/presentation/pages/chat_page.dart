@@ -72,42 +72,39 @@ class _ChatPageState extends State<ChatPage> {
                                 );
                               },
                             )
-                          : Stack(
-                              alignment: AlignmentGeometry.center,
+                          : Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Opacity(
                                   opacity: 0.3,
                                   child: Lottie.asset(
-                                    "animations/infinity_loading.json",
+                                    "assets/animations/infinity_loading.json",
                                     width: ScreenConfig.screenWidth * 0.4,
                                     //height: 100,
                                     repeat: true,
                                     animate: true,
-                                    frameRate: FrameRate(120),
                                     filterQuality: FilterQuality.high,
                                   ),
                                 ),
-                                Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "Start with your first prompt",
-                                        style: GoogleFonts.raleway(
-                                          color: Colors.white60,
-                                          fontSize: 24,
-                                        ),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Start with your first prompt",
+                                      style: GoogleFonts.raleway(
+                                        color: Colors.white60,
+                                        fontSize: 20,
                                       ),
+                                    ),
 
-                                      Text(
-                                        "Ask anything, generate ideas, or explore with AI",
-                                        style: GoogleFonts.raleway(
-                                          color: Colors.white30,
-                                          fontSize: 12,
-                                        ),
+                                    Text(
+                                      "Ask anything, generate ideas, or explore with AI",
+                                      style: GoogleFonts.raleway(
+                                        color: Colors.white30,
+                                        fontSize: 12,
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
@@ -287,7 +284,10 @@ class _ChatPageState extends State<ChatPage> {
                 SizedBox(width: 10),
                 Text(
                   "SILJO DENNY",
-                  style: GoogleFonts.raleway(fontSize: 16,color: Colors.white38),
+                  style: GoogleFonts.raleway(
+                    fontSize: 16,
+                    color: Colors.white38,
+                  ),
                 ),
               ],
             ),
