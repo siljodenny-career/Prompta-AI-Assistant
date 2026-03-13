@@ -1,9 +1,10 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:client/features/chat/data/datasources/models/message_model.dart';
 import 'package:client/features/chat/domain/entities/message.dart';
 import 'package:client/features/chat/domain/usecases/send_chat_usecase.dart';
-import 'package:client/features/chat/data/models/message_model.dart';
+
 import 'package:meta/meta.dart';
 
 part 'chat_event.dart';
