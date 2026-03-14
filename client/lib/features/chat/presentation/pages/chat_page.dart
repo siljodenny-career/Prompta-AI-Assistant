@@ -96,7 +96,7 @@ class _ChatPageState extends State<ChatPage> {
                                         fontSize: 20,
                                       ),
                                     ),
-                                
+
                                     Text(
                                       "Ask anything, generate ideas, or explore with AI",
                                       style: GoogleFonts.raleway(
@@ -136,7 +136,7 @@ class _ChatPageState extends State<ChatPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 5),
+                // SizedBox(height: 5),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -144,9 +144,8 @@ class _ChatPageState extends State<ChatPage> {
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      icon: Icon(Icons.window_rounded),
+                      icon: Icon(Icons.all_inclusive_rounded),
                     ),
-
                     Expanded(
                       child: AnimatedSwitcher(
                         duration: Duration(milliseconds: 300),
