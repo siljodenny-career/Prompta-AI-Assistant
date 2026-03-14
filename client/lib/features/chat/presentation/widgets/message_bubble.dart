@@ -35,7 +35,7 @@ class MessageBubble extends StatelessWidget {
             : Align(
                 alignment: Alignment.centerLeft,
                 child: Lottie.asset(
-                  "animations/infinity_loading.json",
+                  "assets/animations/infinity_loading.json",
                   addRepaintBoundary: true,
                   width: 40,
                   repeat: true,
