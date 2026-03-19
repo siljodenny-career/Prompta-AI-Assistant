@@ -36,21 +36,25 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       // 3. Listen to the Clean Architecture UseCase Stream (pass the full chat history!)
       await for (final chunk in sendChatUsecase.executeStream(userMessages)) {
         currentAiText += chunk;
-        
+
         // Update the very last message in the list with the new appended text
         final updatedMessages = List<Message>.from(state.messages);
-        updatedMessages[updatedMessages.length - 1] = 
-            (updatedMessages.last as MessageModel).copyWith(text: currentAiText);
-            
+        updatedMessages[updatedMessages.length -
+            1] = (updatedMessages.last as MessageModel).copyWith(
+          text: currentAiText,
+        );
+
         // Emit new state: UI rebuilds with the new word!
         emit(state.copyWith(updatedMessages, false));
       }
-      
     } catch (e) {
-      print("BLOC CATCH ERROR: $e"); // <-- Added print statement to debug the exact error
-      
       final errorMessages = List<Message>.from(state.messages)
-        ..add(MessageModel(text: "Error: Could not fetch response\n$e", isUser: false)); // Output error to UI
+        ..add(
+          MessageModel(
+            text: "Error: Could not fetch response\n$e",
+            isUser: false,
+          ),
+        ); // Output error to UI
 
       emit(state.copyWith(errorMessages, false));
     }

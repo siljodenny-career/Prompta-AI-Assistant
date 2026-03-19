@@ -92,12 +92,7 @@ class OnboardingPage extends StatelessWidget {
                       context,
                       MaterialPageRoute(builder: (context) => ChatPage()),
                     );
-                    print('button pressed');
                   },
-                  // padding: EdgeInsets.symmetric(
-                  //   horizontal: size.width * 0.28,
-
-                  // ),
                   padding: EdgeInsets.only(
                     left: ScreenConfig.screenWidth * 0.25,
                     right: ScreenConfig.screenWidth * 0.25,

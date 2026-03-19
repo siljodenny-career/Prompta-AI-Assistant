@@ -18,7 +18,6 @@ class ChatRepositoryImpl extends ChatRepository {
         yield chunk;
       }
     } catch (e) {
-      print("REPOSITORY CATCH ERROR: $e"); // <-- Added print statement to catch parsing/network errors
       throw Exception('Failed to get AI response :$e');
     }
   }
