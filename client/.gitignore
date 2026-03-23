@@ -14,7 +14,7 @@ migrate_working_dir/
 
 # environment variables
 .env
-.env.*
+
 
 # IntelliJ related
 
