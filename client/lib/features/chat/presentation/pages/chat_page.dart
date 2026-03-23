@@ -278,11 +278,11 @@ class _ChatPageState extends State<ChatPage> {
                 CircleAvatar(
                   radius: 18,
                   backgroundColor: Colors.black,
-                  child: Center(child: Text("SD")),
+                  child: Center(child: Text("GU")),
                 ),
                 SizedBox(width: 10),
                 Text(
-                  "SILJO DENNY",
+                  "Guest User",
                   style: GoogleFonts.raleway(
                     fontSize: 16,
                     color: Colors.white38,

@@ -68,7 +68,7 @@ class _PromptInputFieldState extends State<PromptInputField> {
                     : SizedBox(),
                 TextField(
                   style: GoogleFonts.raleway(color: Colors.white60),
-                  textCapitalization: TextCapitalization.words,
+                  textCapitalization: TextCapitalization.sentences,
                   controller: _controller,
                   textInputAction: TextInputAction.send,
                   onSubmitted: (_) => _sendMessage(),
