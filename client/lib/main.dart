@@ -1,9 +1,9 @@
 import 'package:client/core/components/screen_config.dart';
+import 'package:client/features/auth/sign_in/sign_in_screen.dart';
 import 'package:client/features/chat/data/datasources/chat_remote_datasource.dart';
 import 'package:client/features/chat/data/repositories/chat_repository_impl.dart';
 import 'package:client/features/chat/domain/usecases/send_chat_usecase.dart';
 import 'package:client/features/chat/presentation/blocs/chat_bloc/chat_bloc.dart';
-import 'package:client/features/chat/presentation/pages/onboarding_page.dart';
 import 'package:client/core/theme/app_theme.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
       title: 'Prompta',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme,
-      home: OnboardingPage(),
+      home: SignInPage(),
     );
   }
 }
