@@ -1,5 +1,8 @@
 import 'package:equatable/equatable.dart';
-import 'package:user_respository/src/entities/myuser_entity.dart';
+
+import '../entities/entities.dart';
+
+
 
 class MyUser extends Equatable {
   final String userId;
@@ -30,8 +33,7 @@ class MyUser extends Equatable {
     );
   }
 
-  
-  MyuserEntity toEntity(){
+  MyuserEntity toEntity() {
     return MyuserEntity(
       userId: userId,
       name: name,
@@ -39,7 +41,7 @@ class MyUser extends Equatable {
     );
   }
 
-  static MyUser fromEntity(MyuserEntity entity){
+  static MyUser fromEntity(MyuserEntity entity) {
     return MyUser(
       userId: entity.userId,
       name: entity.name,

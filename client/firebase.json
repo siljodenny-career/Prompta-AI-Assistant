@@ -1,16 +1,1 @@
-{
-  "hosting": {
-    "public": "build/web",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ]
-  }
-}
+{"hosting":{"public":"build/web","ignore":["firebase.json","**/.*","**/node_modules/**"],"rewrites":[{"source":"**","destination":"/index.html"}]},"flutter":{"platforms":{"android":{"default":{"projectId":"prompta-ai-demo","appId":"1:739501948136:android:90898ffc28340e65851d5d","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"prompta-ai-demo","configurations":{"android":"1:739501948136:android:90898ffc28340e65851d5d","ios":"1:739501948136:ios:ff4bf641e8d3f840851d5d","macos":"1:739501948136:ios:ff4bf641e8d3f840851d5d","web":"1:739501948136:web:e064a3ee96a502f0851d5d","windows":"1:739501948136:web:8012006da8529633851d5d"}}}}}}
