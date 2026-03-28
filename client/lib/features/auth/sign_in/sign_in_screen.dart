@@ -275,10 +275,11 @@ class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
                                   icon: Icons.mail_outline_rounded,
                                   controller: _emailCtrl,
                                   keyboardType: TextInputType.emailAddress,
-                                  validator: (v) =>
-                                      (v == null || !v.contains('@'))
-                                      ? 'Enter a valid email'
-                                      : null,
+                                  validator: (v) {
+                                    if (v == null || v.isEmpty) return 'Enter a valid email';
+                                    final emailRegex = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
+                                    return emailRegex.hasMatch(v) ? null : 'Enter a valid email';
+                                  },
                                 ),
                               ),
                               const SizedBox(height: 12),

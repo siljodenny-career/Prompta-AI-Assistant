@@ -25,7 +25,9 @@ class ChatRemoteDatasourceImpl extends ChatRemoteDatasource {
           }).toList()
         });
 
-      final response = await request.send();
+      final response = await request.send().timeout(
+        const Duration(seconds: 30),
+      );
 
       if (response.statusCode == 200) {
         // Read the stream byte-by-byte as it arrives

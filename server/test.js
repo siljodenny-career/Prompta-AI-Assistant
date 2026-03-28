@@ -1,5 +1,4 @@
 require('dotenv').config();
-console.log('Key evaluated:', process.env.OPENROUTER_API_KEY);
 
 const axios = require('axios');
 

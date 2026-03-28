@@ -1,5 +1,6 @@
 import 'package:client/core/components/custom_button.dart';
 import 'package:client/core/components/screen_config.dart';
+import 'package:client/features/auth/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:client/features/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:client/features/chat/presentation/blocs/chat_bloc/chat_bloc.dart';
 import 'package:client/features/chat/presentation/widgets/message_bubble.dart';
@@ -41,19 +42,24 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        drawer: _sidebarmenu(),
-        appBar: _appBar(),
-        body: BlocBuilder<ChatBloc, ChatState>(
-          builder: (context, state) {
-            // By calling this post-frame, we guarantee the ListView has already painted
-            // the newest text chunk layout before attempting to scroll to the newest bottom
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              _scrollToBottom();
-            });
-
-            return Padding(
+    return BlocListener<AuthenticationBloc, AuthenticationState>(
+      listener: (context, state) {
+        if (state.status == AuthenticationStatus.unauthenticated) {
+          Navigator.of(context).popUntil((route) => route.isFirst);
+        }
+      },
+      child: SafeArea(
+        child: Scaffold(
+          drawer: _sidebarmenu(),
+          appBar: _appBar(),
+          body: BlocConsumer<ChatBloc, ChatState>(
+            listener: (context, state) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                _scrollToBottom();
+              });
+            },
+            builder: (context, state) {
+              return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Container(
                 width: ScreenConfig.screenWidth,
@@ -119,7 +125,8 @@ class _ChatPageState extends State<ChatPage> {
                 ),
               ),
             );
-          },
+            },
+          ),
         ),
       ),
     );
