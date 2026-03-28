@@ -130,7 +130,7 @@ packages:
     source: hosted
     version: "1.4.0"
   device_preview:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: device_preview
       sha256: "88aa1cc73ee9a8ec771b309dcbc4000cc66b5d8456b825980997640ab1195bf5"
