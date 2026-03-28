@@ -1,5 +1,3 @@
-import 'package:client/features/auth/blocs/authentication_bloc/authentication_bloc.dart';
-import 'package:client/features/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:client/features/auth/blocs/sign_up_bloc/sign_up_bloc.dart';
 import 'package:client/features/auth/utils/animated_background.dart';
 import 'package:client/features/auth/utils/snackbar.dart';
@@ -10,7 +8,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:user_repository/user_repository.dart';
 
-import '../sign_in/sign_in_screen.dart';
 import '../utils/prompta_logo.dart';
 import '../utils/submit_button.dart';
 import 'components/password_strength.dart';
@@ -19,7 +16,8 @@ import 'components/typewriter_headlines.dart';
 
 // ─── Sign Up Page ─────────────────────────────────────────────────────────────
 class SignUpPage extends StatefulWidget {
-  const SignUpPage({super.key});
+  final VoidCallback? onNavigateToSignIn;
+  const SignUpPage({super.key, this.onNavigateToSignIn});
 
   @override
   State<SignUpPage> createState() => _SignUpPageState();
@@ -418,6 +416,7 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                                             ),
                                           ),
                                           TextButton(
+                                            onPressed: widget.onNavigateToSignIn,
                                             child: Text(
                                               'Sign In',
                                               style: GoogleFonts.raleway(
@@ -427,32 +426,6 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                                                 fontSize: 14,
                                               ),
                                             ),
-                                            onPressed: () {
-                                              Navigator.pushReplacement(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (_) => MultiBlocProvider(
-                                                    providers: [
-                                                      BlocProvider<SignInBloc>(
-                                                        create: (_) => SignInBloc(
-                                                          userRepository: context
-                                                              .read<AuthenticationBloc>()
-                                                              .userRepository,
-                                                        ),
-                                                      ),
-                                                      BlocProvider<SignUpBloc>(
-                                                        create: (_) => SignUpBloc(
-                                                          userRepository: context
-                                                              .read<AuthenticationBloc>()
-                                                              .userRepository,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                    child: const SignInPage(),
-                                                  ),
-                                                ),
-                                              );
-                                            },
                                           ),
                                         ],
                                       ),

@@ -1,6 +1,4 @@
-import 'package:client/features/auth/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:client/features/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
-import 'package:client/features/auth/blocs/sign_up_bloc/sign_up_bloc.dart';
 import 'package:client/features/auth/utils/animated_background.dart';
 import 'package:client/features/auth/utils/snackbar.dart';
 import 'package:client/features/auth/utils/textfield.dart';
@@ -9,13 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../sign_up/sign_up_screen.dart';
 import '../utils/prompta_logo.dart';
 import '../utils/submit_button.dart';
 
 // ─── Sign In Page ─────────────────────────────────────────────────────────────
 class SignInPage extends StatefulWidget {
-  const SignInPage({super.key});
+  final VoidCallback? onNavigateToSignUp;
+  const SignInPage({super.key, this.onNavigateToSignUp});
 
   @override
   State<SignInPage> createState() => _SignInPageState();
@@ -275,10 +273,11 @@ class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
                                   icon: Icons.mail_outline_rounded,
                                   controller: _emailCtrl,
                                   keyboardType: TextInputType.emailAddress,
-                                  validator: (v) =>
-                                      (v == null || !v.contains('@'))
-                                      ? 'Enter a valid email'
-                                      : null,
+                                  validator: (v) {
+                                    if (v == null || v.isEmpty) return 'Enter a valid email';
+                                    final emailRegex = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
+                                    return emailRegex.hasMatch(v) ? null : 'Enter a valid email';
+                                  },
                                 ),
                               ),
                               const SizedBox(height: 12),
@@ -399,36 +398,7 @@ class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
                                         ),
                                       ),
                                       TextButton(
-                                        onPressed: () {
-                                          Navigator.pushReplacement(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (_) => MultiBlocProvider(
-                                                providers: [
-                                                  BlocProvider<SignUpBloc>(
-                                                    create: (_) => SignUpBloc(
-                                                      userRepository: context
-                                                          .read<
-                                                            AuthenticationBloc
-                                                          >()
-                                                          .userRepository,
-                                                    ),
-                                                  ),
-                                                  BlocProvider<SignInBloc>(
-                                                    create: (_) => SignInBloc(
-                                                      userRepository: context
-                                                          .read<
-                                                            AuthenticationBloc
-                                                          >()
-                                                          .userRepository,
-                                                    ),
-                                                  ),
-                                                ],
-                                                child: const SignUpPage(),
-                                              ),
-                                            ),
-                                          );
-                                        },
+                                        onPressed: widget.onNavigateToSignUp,
                                         child: Text(
                                           'Sign up',
                                           style: GoogleFonts.raleway(

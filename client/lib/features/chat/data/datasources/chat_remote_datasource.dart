@@ -8,8 +8,10 @@ abstract class ChatRemoteDatasource {
 }
 
 class ChatRemoteDatasourceImpl extends ChatRemoteDatasource {
-  // ⚠️ Important: If testing on Android Emulator, change "localhost" to "10.0.2.2"
-  final String baseUrl = 'https://prompta-ai-assistant.onrender.com';
+  // ⚠️ Change to production URL before deploying:
+  // Production: 'https://prompta-ai-assistant.onrender.com'
+  // Android Emulator: 'http://10.0.2.2:5000'
+  final String baseUrl = 'http://localhost:5000';
 
   @override
   Stream<String> fetchApiResponse(List<Message> chatHistory) async* {
@@ -25,7 +27,9 @@ class ChatRemoteDatasourceImpl extends ChatRemoteDatasource {
           }).toList()
         });
 
-      final response = await request.send();
+      final response = await request.send().timeout(
+        const Duration(seconds: 30),
+      );
 
       if (response.statusCode == 200) {
         // Read the stream byte-by-byte as it arrives

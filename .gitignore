@@ -1,0 +1,48 @@
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Environment variables
+.env
+.env.*
+.env.local
+.env.production
+
+# Secrets & credentials
+*.pem
+*.key
+*.p12
+*.jks
+*.keystore
+credentials.json
+service-account*.json
+
+# Node
+node_modules/
+dist/
+*.tsbuildinfo
+
+# Firebase
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+
+# Google Services (contains API keys)
+google-services.json
+GoogleService-Info.plist
+
+# Flutter/Dart
+.dart_tool/
+.pub-cache/
+build/

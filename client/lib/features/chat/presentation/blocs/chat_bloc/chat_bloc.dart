@@ -12,6 +12,7 @@ part 'chat_state.dart';
 
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final SendChatUsecase sendChatUsecase;
+  final List<Message> _messages = [];
 
   ChatBloc({required this.sendChatUsecase}) : super(ChatState()) {
     on<SendChatEvent>(_onSendChat);
@@ -21,42 +22,38 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     if (event.text.trim().isEmpty) return;
 
     // 1. Add User's typed message to state instantly
-    final userMessages = List<Message>.from(state.messages)
-      ..add(MessageModel(text: event.text, isUser: true));
+    _messages.add(MessageModel(text: event.text, isUser: true));
+    emit(state.copyWith(List.unmodifiable(_messages), true));
 
-    // Emit new state: show loading and update messages
-    emit(state.copyWith(userMessages, true));
+    // Snapshot messages to send (before adding empty AI placeholder)
+    final messagesToSend = List<Message>.unmodifiable(_messages);
 
     try {
       // 2. We start with an empty AI message to hold the incoming stream
       String currentAiText = "";
-      state.messages.add(MessageModel(text: currentAiText, isUser: false));
-      emit(state.copyWith(state.messages, false));
+      _messages.add(MessageModel(text: currentAiText, isUser: false));
+      emit(state.copyWith(List.unmodifiable(_messages), false));
 
-      // 3. Listen to the Clean Architecture UseCase Stream (pass the full chat history!)
-      await for (final chunk in sendChatUsecase.executeStream(userMessages)) {
+      // 3. Listen to the Clean Architecture UseCase Stream (pass chat history without empty placeholder)
+      await for (final chunk in sendChatUsecase.executeStream(messagesToSend)) {
         currentAiText += chunk;
 
-        // Update the very last message in the list with the new appended text
-        final updatedMessages = List<Message>.from(state.messages);
-        updatedMessages[updatedMessages.length -
-            1] = (updatedMessages.last as MessageModel).copyWith(
+        // Update the last message in-place, then emit a new list reference
+        _messages[_messages.length - 1] = MessageModel(
           text: currentAiText,
+          isUser: false,
         );
 
-        // Emit new state: UI rebuilds with the new word!
-        emit(state.copyWith(updatedMessages, false));
+        emit(state.copyWith(List.unmodifiable(_messages), false));
       }
     } catch (e) {
-      final errorMessages = List<Message>.from(state.messages)
-        ..add(
-          MessageModel(
-            text: "Error: Could not fetch response\n$e",
-            isUser: false,
-          ),
-        ); // Output error to UI
-
-      emit(state.copyWith(errorMessages, false));
+      _messages.add(
+        MessageModel(
+          text: "Error: Could not fetch response.",
+          isUser: false,
+        ),
+      );
+      emit(state.copyWith(List.unmodifiable(_messages), false));
     }
   }
 }

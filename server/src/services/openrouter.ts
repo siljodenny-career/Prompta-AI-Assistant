@@ -1,11 +1,12 @@
-
 import type { Request, Response } from "express";
 import axios from "axios";
-import { json } from "node:stream/consumers";
 
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
+const REQUEST_TIMEOUT = 30000;
 
-export async function sendChatCompletion(messages: any[]) {
+const siteUrl = process.env.SITE_URL || "https://prompta-ai-demo.web.app";
+
+export async function sendChatCompletion(messages: Array<{ role: string; content: string }>) {
   try {
     const response = await axios.post(
       OPENROUTER_URL,
@@ -14,27 +15,26 @@ export async function sendChatCompletion(messages: any[]) {
         messages
       },
       {
+        timeout: REQUEST_TIMEOUT,
         headers: {
           Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
           "Content-Type": "application/json",
-          "HTTP-Referer": "http://localhost:3000",
-          "X-Title": "ChatGPT Clone"
+          "HTTP-Referer": siteUrl,
+          "X-Title": "Prompta AI"
         }
       }
     );
 
     return response.data;
   } catch (error: any) {
-    throw error.response?.data || error.message;
+    throw new Error("Failed to get AI response.");
   }
 }
-
-
 
 export async function streamChatCompletion(req: Request, res: Response) {
   try {
     const streamResponse = await axios.post(
-      "https://openrouter.ai/api/v1/chat/completions",
+      OPENROUTER_URL,
       {
         model: "openai/gpt-4o-mini",
         messages: req.body.messages,
@@ -42,16 +42,21 @@ export async function streamChatCompletion(req: Request, res: Response) {
       },
       {
         responseType: "stream",
+        timeout: REQUEST_TIMEOUT,
         headers: {
           Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
           "Content-Type": "application/json",
-          "HTTP-Referer": "http://localhost:3000",
-          "X-Title": "ChatGPT Clone"
+          "HTTP-Referer": siteUrl,
+          "X-Title": "Prompta AI"
         }
       }
     );
 
     res.setHeader("Content-Type", "text/event-stream");
+
+    req.on("close", () => {
+      streamResponse.data.destroy();
+    });
 
     for await (const chunk of streamResponse.data) {
       const lines = chunk
@@ -61,7 +66,7 @@ export async function streamChatCompletion(req: Request, res: Response) {
 
       for (const line of lines) {
         if (line.startsWith("data: ")) {
-          const jsonStr = line.substring(6).trim(); // Safely remove 'data: ' and trim whitespace
+          const jsonStr = line.substring(6).trim();
 
           if (jsonStr === "[DONE]") {
             res.end();
@@ -75,9 +80,8 @@ export async function streamChatCompletion(req: Request, res: Response) {
             if (content) {
               res.write(`data: ${JSON.stringify(content)}\n\n`);
             }
-          } catch (e: any) {
-            console.error("Failed to parse OpenRouter chunk:", jsonStr, e.message);
-            // Ignore incomplete chunks instead of crashing the server
+          } catch {
+            // Ignore incomplete chunks
           }
         }
       }
@@ -86,6 +90,8 @@ export async function streamChatCompletion(req: Request, res: Response) {
     res.end();
 
   } catch (error: any) {
-    res.status(500).json({ error: error.message });
+    if (!res.headersSent) {
+      res.status(500).json({ error: "An error occurred processing your request." });
+    }
   }
 }

@@ -5,10 +5,10 @@ import 'package:client/features/chat/presentation/blocs/chat_bloc/chat_bloc.dart
 import 'package:client/firebase_options.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:user_repository/user_repository.dart';
-
 
 import 'app.dart';
 
@@ -26,10 +26,9 @@ void main() async {
     BlocProvider(
       create: (_) => ChatBloc(sendChatUsecase: useCase),
       child: DevicePreview(
+        enabled: kDebugMode,
         builder: (context) => MyApp(FirebaseUserRepo()),
       ),
     ),
   );
 }
-
-
