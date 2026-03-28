@@ -50,3 +50,11 @@ app.*.map.json
 # Environment variables
 .env
 .env.*
+
+# Firebase
+.firebase/
+firebase-debug.log
+
+# Google Services (contains API keys)
+**/google-services.json
+**/GoogleService-Info.plist
