@@ -11,9 +11,17 @@ const PORT = process.env.PORT || 5000;
 
 const allowedOrigins = process.env.CORS_ORIGINS
   ? process.env.CORS_ORIGINS.split(",")
-  : ["http://localhost:3000", "https://prompta-ai-demo.web.app"];
+  : ["https://prompta-ai-demo.web.app"];
 
-app.use(cors({ origin: allowedOrigins }));
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || origin.startsWith("http://localhost") || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+}));
 app.use(express.json({ limit: "1mb" }));
 
 const chatLimiter = rateLimit({
