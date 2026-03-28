@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'core/theme/app_theme.dart';
 import 'features/auth/sign_in/sign_in_screen.dart';
+import 'features/auth/sign_up/sign_up_screen.dart';
 
 class MyAppView extends StatelessWidget {
   const MyAppView({super.key});
@@ -39,7 +40,7 @@ class MyAppView extends StatelessWidget {
                   ),
                 ),
               ],
-              child: const SignInScreen(),
+              child: const AuthNavigator(),
             );
           }
         },
@@ -48,13 +49,30 @@ class MyAppView extends StatelessWidget {
   }
 }
 
-/// A wrapper that provides the sign-in screen as the default landing,
-/// with the option to navigate to sign-up.
-class SignInScreen extends StatelessWidget {
-  const SignInScreen({super.key});
+/// Manages navigation between SignIn and SignUp within the auth flow,
+/// keeping both screens under the same BLoC providers.
+class AuthNavigator extends StatefulWidget {
+  const AuthNavigator({super.key});
+
+  @override
+  State<AuthNavigator> createState() => _AuthNavigatorState();
+}
+
+class _AuthNavigatorState extends State<AuthNavigator> {
+  bool _showSignIn = true;
+
+  void _toggleAuth() {
+    setState(() => _showSignIn = !_showSignIn);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return const SignInPage();
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 300),
+      child: _showSignIn
+          ? SignInPage(key: const ValueKey('signIn'), onNavigateToSignUp: _toggleAuth)
+          : SignUpPage(key: const ValueKey('signUp'), onNavigateToSignIn: _toggleAuth),
+    );
   }
 }
+

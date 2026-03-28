@@ -13,7 +13,9 @@ class PromptInputField extends StatefulWidget {
 
 class _PromptInputFieldState extends State<PromptInputField> {
   final TextEditingController _controller = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
   bool _hasText = false;
+  bool _wasLoading = false;
 
   void _sendMessage() {
     if (_controller.text.isNotEmpty) {
@@ -40,12 +42,25 @@ class _PromptInputFieldState extends State<PromptInputField> {
   @override
   void dispose() {
     _controller.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return BlocListener<ChatBloc, ChatState>(
+      listenWhen: (previous, current) =>
+          _wasLoading && !current.isLoading,
+      listener: (context, state) {
+        _focusNode.requestFocus();
+      },
+      child: BlocListener<ChatBloc, ChatState>(
+        listenWhen: (previous, current) =>
+            previous.isLoading != current.isLoading,
+        listener: (context, state) {
+          _wasLoading = state.isLoading;
+        },
+        child: Container(
       margin: EdgeInsets.fromLTRB(10, 10, 10, 20),
       padding: const EdgeInsets.fromLTRB(25, 0, 6, 0),
       decoration: BoxDecoration(
@@ -67,6 +82,7 @@ class _PromptInputFieldState extends State<PromptInputField> {
                       )
                     : SizedBox(),
                 TextField(
+                  focusNode: _focusNode,
                   style: GoogleFonts.raleway(color: Colors.white60),
                   textCapitalization: TextCapitalization.sentences,
                   controller: _controller,
@@ -111,6 +127,8 @@ class _PromptInputFieldState extends State<PromptInputField> {
           ),
         ],
       ),
+    ),
+    ),
     );
   }
 }

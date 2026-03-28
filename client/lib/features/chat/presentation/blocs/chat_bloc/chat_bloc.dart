@@ -25,14 +25,17 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     _messages.add(MessageModel(text: event.text, isUser: true));
     emit(state.copyWith(List.unmodifiable(_messages), true));
 
+    // Snapshot messages to send (before adding empty AI placeholder)
+    final messagesToSend = List<Message>.unmodifiable(_messages);
+
     try {
       // 2. We start with an empty AI message to hold the incoming stream
       String currentAiText = "";
       _messages.add(MessageModel(text: currentAiText, isUser: false));
       emit(state.copyWith(List.unmodifiable(_messages), false));
 
-      // 3. Listen to the Clean Architecture UseCase Stream (pass the full chat history!)
-      await for (final chunk in sendChatUsecase.executeStream(_messages)) {
+      // 3. Listen to the Clean Architecture UseCase Stream (pass chat history without empty placeholder)
+      await for (final chunk in sendChatUsecase.executeStream(messagesToSend)) {
         currentAiText += chunk;
 
         // Update the last message in-place, then emit a new list reference
