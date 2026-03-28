@@ -18,10 +18,16 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
         await _userRepository.signIn(event.email, event.password);
         emit(SignInSuccess());
       } on FirebaseAuthException catch (e) {
-        emit(SignInFailure("firebase auth error: ${e.message}"));
+        emit(SignInFailure(e.message ?? "Authentication failed."));
       } catch (e) {
         emit(SignInFailure(e.toString()));
       }
     });
+
+    on<SignOutRequired>(
+      (event, emit) async {
+        await _userRepository.signOut();
+      },
+    );
   }
 }

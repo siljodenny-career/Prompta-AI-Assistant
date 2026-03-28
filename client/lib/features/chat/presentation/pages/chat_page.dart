@@ -1,4 +1,6 @@
+import 'package:client/core/components/custom_button.dart';
 import 'package:client/core/components/screen_config.dart';
+import 'package:client/features/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:client/features/chat/presentation/blocs/chat_bloc/chat_bloc.dart';
 import 'package:client/features/chat/presentation/widgets/message_bubble.dart';
 import 'package:client/features/chat/presentation/widgets/prompt_input_field.dart';
@@ -270,6 +272,13 @@ class _ChatPageState extends State<ChatPage> {
             ),
           ),
           Spacer(),
+          CustomButton(
+            text: 'Logout',
+            onPressed: () {
+              context.read<SignInBloc>().add(SignOutRequired());
+            },
+            icon: Icons.logout_rounded,
+          ),
           Divider(),
           Padding(
             padding: EdgeInsets.all(12),

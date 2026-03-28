@@ -1,8 +1,11 @@
 import 'package:client/core/components/custom_button.dart';
 import 'package:client/core/components/screen_config.dart';
+import 'package:client/features/auth/blocs/authentication_bloc/authentication_bloc.dart';
+import 'package:client/features/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:client/features/chat/presentation/pages/chat_page.dart';
 import 'package:client/features/chat/presentation/widgets/basic_features.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -41,7 +44,9 @@ class OnboardingPage extends StatelessWidget {
                           color: Colors.white,
                         ),
                       ),
-                      SizedBox(width: 30,),
+                      SizedBox(
+                        width: 30,
+                      ),
                       SvgPicture.asset(
                         'assets/images/prompt_icon.svg',
                         width: 60,
@@ -90,7 +95,16 @@ class OnboardingPage extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => ChatPage()),
+                      MaterialPageRoute(
+                        builder: (context) => BlocProvider(
+                          create: (context) => SignInBloc(
+                            userRepository: context
+                                .read<AuthenticationBloc>()
+                                .userRepository,
+                          ),
+                          child: ChatPage(),
+                        ),
+                      ),
                     );
                   },
                   padding: EdgeInsets.only(

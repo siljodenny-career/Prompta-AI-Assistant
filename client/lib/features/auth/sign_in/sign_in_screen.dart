@@ -1,7 +1,12 @@
+import 'package:client/features/auth/blocs/authentication_bloc/authentication_bloc.dart';
+import 'package:client/features/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
+import 'package:client/features/auth/blocs/sign_up_bloc/sign_up_bloc.dart';
 import 'package:client/features/auth/utils/animated_background.dart';
+import 'package:client/features/auth/utils/snackbar.dart';
 import 'package:client/features/auth/utils/textfield.dart';
 import 'package:client/features/auth/utils/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../sign_up/sign_up_screen.dart';
@@ -36,6 +41,8 @@ class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
 
   final _emailCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
+
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -117,275 +124,339 @@ class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  bool signInRequired = false;
+
   @override
   Widget build(BuildContext context) {
     final screenW = MediaQuery.of(context).size.width;
 
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: PromptaWelcomeTheme.bg,
-        body: Stack(
-          children: [
-            // ── Animated background particles + glows
-            Positioned.fill(
-              child: AnimatedBuilder(
-                animation: _bgCtrl,
-                builder: (_, __) => CustomPaint(
-                  painter: ParticlePainter(_bgCtrl.value),
+    return BlocListener<SignInBloc, SignInState>(
+      listener: (context, state) {
+        if (state is SignInLoading) {
+          setState(() => signInRequired = true);
+        } else if (state is SignInSuccess) {
+          setState(() => signInRequired = false);
+          // Navigation is handled by AuthenticationBloc in appview.dart
+          // The successful sign-in triggers Firebase auth state change,
+          // which AuthenticationBloc listens to and rebuilds the app
+          // showing OnboardingPage.
+        } else if (state is SignInFailure) {
+          setState(() => signInRequired = false);
+          PromptaSnackBar.error(context, 'Invalid email or password.');
+        }
+      },
+      child: SafeArea(
+        child: Scaffold(
+          backgroundColor: PromptaWelcomeTheme.bg,
+          body: Stack(
+            children: [
+              // ── Animated background particles + glows
+              Positioned.fill(
+                child: AnimatedBuilder(
+                  animation: _bgCtrl,
+                  builder: (_, __) => CustomPaint(
+                    painter: ParticlePainter(_bgCtrl.value),
+                  ),
                 ),
               ),
-            ),
 
-            // ── Scrollable content
-            SingleChildScrollView(
-              padding: EdgeInsets.symmetric(
-                horizontal: screenW * 0.09,
-                vertical: screenW * 0.05,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 24),
+              // ── Scrollable content
+              SingleChildScrollView(
+                padding: EdgeInsets.symmetric(
+                  horizontal: screenW * 0.09,
+                  vertical: screenW * 0.05,
+                ),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 24),
 
-                  // ── Logo entrance animation
-                  Center(
-                    child: AnimatedBuilder(
-                      animation: _logoCtrl,
-                      builder: (_, __) => FadeTransition(
-                        opacity: _logoFade,
-                        child: ScaleTransition(
-                          scale: _logoScale,
-                          child: Column(
-                            children: [
-                              // Logo mark
-                              PromptaLogo(size: 72),
-                              const SizedBox(height: 14),
-
-                              // App name beside logo — matches onboarding style
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.center,
+                      // ── Logo entrance animation
+                      Center(
+                        child: AnimatedBuilder(
+                          animation: _logoCtrl,
+                          builder: (_, __) => FadeTransition(
+                            opacity: _logoFade,
+                            child: ScaleTransition(
+                              scale: _logoScale,
+                              child: Column(
                                 children: [
-                                  Text(
-                                    'Prompta',
-                                    style: GoogleFonts.raleway(
-                                      fontSize: 26,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                      letterSpacing: -0.5,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 6),
-                                  // Glowing dot accent
-                                  AnimatedBuilder(
-                                    animation: _logoGlow,
-                                    builder: (_, __) => Container(
-                                      width: 7,
-                                      height: 7,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: PromptaWelcomeTheme.accent,
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: PromptaWelcomeTheme.accent
-                                                .withOpacity(
-                                                  0.8 * _logoGlow.value,
-                                                ),
-                                            blurRadius: 10,
-                                          ),
-                                        ],
+                                  // Logo mark
+                                  PromptaLogo(size: 72),
+                                  const SizedBox(height: 14),
+
+                                  // App name beside logo — matches onboarding style
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'Prompta',
+                                        style: GoogleFonts.raleway(
+                                          fontSize: 26,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                          letterSpacing: -0.5,
+                                        ),
                                       ),
-                                    ),
+                                      const SizedBox(width: 6),
+                                      // Glowing dot accent
+                                      AnimatedBuilder(
+                                        animation: _logoGlow,
+                                        builder: (_, __) => Container(
+                                          width: 7,
+                                          height: 7,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: PromptaWelcomeTheme.accent,
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: PromptaWelcomeTheme
+                                                    .accent
+                                                    .withOpacity(
+                                                      0.8 * _logoGlow.value,
+                                                    ),
+                                                blurRadius: 10,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 40),
+
+                      // ── Rest of content with slide+fade
+                      FadeTransition(
+                        opacity: _contentFade,
+                        child: SlideTransition(
+                          position: _contentSlide,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Heading — same Raleway bold style as onboarding
+                              Text(
+                                'Welcome\nback.',
+                                style: GoogleFonts.raleway(
+                                  fontSize: 32,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  height: 1.15,
+                                  letterSpacing: -0.8,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Sign in to continue your Prompta experience.',
+                                style: GoogleFonts.raleway(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.white60,
+                                ),
+                              ),
+
+                              const SizedBox(height: 36),
+
+                              // ── Email field (staggered)
+                              FadeTransition(
+                                opacity: _f1,
+                                child: PromptaField(
+                                  label: 'Email address',
+                                  icon: Icons.mail_outline_rounded,
+                                  controller: _emailCtrl,
+                                  keyboardType: TextInputType.emailAddress,
+                                  validator: (v) =>
+                                      (v == null || !v.contains('@'))
+                                      ? 'Enter a valid email'
+                                      : null,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+
+                              // ── Password field (staggered)
+                              FadeTransition(
+                                opacity: _f2,
+                                child: PromptaField(
+                                  label: 'Password',
+                                  icon: Icons.lock_outline_rounded,
+                                  controller: _passCtrl,
+                                  obscure: true,
+                                  validator: (v) => (v == null || v.length < 6)
+                                      ? 'Min 6 characters'
+                                      : null,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              // ── Forgot password
+                              FadeTransition(
+                                opacity: _f2,
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: TextButton(
+                                    onPressed: () {},
+                                    style: TextButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 10,
+                                        horizontal: 0,
+                                      ),
+                                      minimumSize: Size.zero,
+                                      tapTargetSize:
+                                          MaterialTapTargetSize.shrinkWrap,
+                                    ),
+                                    child: Text(
+                                      'Forgot password?',
+                                      style: GoogleFonts.raleway(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                        color: PromptaWelcomeTheme.accent,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                              const SizedBox(height: 24),
+
+                              // ── Sign In button (staggered)
+                              if (!signInRequired)
+                                FadeTransition(
+                                  opacity: _f3,
+                                  child: SubmitButton(
+                                    onPressed: () {
+                                      if (_formKey.currentState!.validate()) {
+                                        context.read<SignInBloc>().add(
+                                          SignInRequired(
+                                            _emailCtrl.text,
+                                            _passCtrl.text,
+                                          ),
+                                        );
+                                      }
+                                    },
+                                    text: 'Sign In',
+                                    icon: Icons.arrow_forward,
+                                  ),
+                                ),
+
+                              const SizedBox(height: 28),
+
+                              // ── Divider
+                              FadeTransition(
+                                opacity: _f3,
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Divider(
+                                        color: PromptaWelcomeTheme.border,
+                                        thickness: 1,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 14,
+                                      ),
+                                      child: Text(
+                                        'or',
+                                        style: GoogleFonts.raleway(
+                                          color: PromptaWelcomeTheme.textMuted,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Divider(
+                                        color: PromptaWelcomeTheme.border,
+                                        thickness: 1,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              const SizedBox(height: 26),
+
+                              // ── Sign up link
+                              FadeTransition(
+                                opacity: _f4,
+                                child: Center(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "Don't have an account? ",
+                                        style: GoogleFonts.raleway(
+                                          color: Colors.white60,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (_) => MultiBlocProvider(
+                                                providers: [
+                                                  BlocProvider<SignUpBloc>(
+                                                    create: (_) => SignUpBloc(
+                                                      userRepository: context
+                                                          .read<
+                                                            AuthenticationBloc
+                                                          >()
+                                                          .userRepository,
+                                                    ),
+                                                  ),
+                                                  BlocProvider<SignInBloc>(
+                                                    create: (_) => SignInBloc(
+                                                      userRepository: context
+                                                          .read<
+                                                            AuthenticationBloc
+                                                          >()
+                                                          .userRepository,
+                                                    ),
+                                                  ),
+                                                ],
+                                                child: const SignUpPage(),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        child: Text(
+                                          'Sign up',
+                                          style: GoogleFonts.raleway(
+                                            color: PromptaWelcomeTheme.accent,
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 28),
                             ],
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
-
-                  const SizedBox(height: 40),
-
-                  // ── Rest of content with slide+fade
-                  FadeTransition(
-                    opacity: _contentFade,
-                    child: SlideTransition(
-                      position: _contentSlide,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Heading — same Raleway bold style as onboarding
-                          Text(
-                            'Welcome\nback.',
-                            style: GoogleFonts.raleway(
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              height: 1.15,
-                              letterSpacing: -0.8,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Sign in to continue your Prompta experience.',
-                            style: GoogleFonts.raleway(
-                              fontSize: 15,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.white60,
-                            ),
-                          ),
-
-                          const SizedBox(height: 36),
-
-                          // ── Email field (staggered)
-                          FadeTransition(
-                            opacity: _f1,
-                            child: PromptaField(
-                              label: 'Email address',
-                              icon: Icons.mail_outline_rounded,
-                              controller: _emailCtrl,
-                              keyboardType: TextInputType.emailAddress,
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-
-                          // ── Password field (staggered)
-                          FadeTransition(
-                            opacity: _f2,
-                            child: PromptaField(
-                              label: 'Password',
-                              icon: Icons.lock_outline_rounded,
-                              controller: _passCtrl,
-                              obscure: true,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          // ── Forgot password
-                          FadeTransition(
-                            opacity: _f2,
-                            child: Align(
-                              alignment: Alignment.centerRight,
-                              child: TextButton(
-                                onPressed: () {},
-                                style: TextButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 10,
-                                    horizontal: 0,
-                                  ),
-                                  minimumSize: Size.zero,
-                                  tapTargetSize:
-                                      MaterialTapTargetSize.shrinkWrap,
-                                ),
-                                child: Text(
-                                  'Forgot password?',
-                                  style: GoogleFonts.raleway(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                    color: PromptaWelcomeTheme.accent,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          const SizedBox(height: 24),
-
-                          // ── Sign In button (staggered)
-                          FadeTransition(
-                            opacity: _f3,
-                            child: SubmitButton(
-                              text: 'Sign In',
-                              icon: Icons.arrow_forward,
-                              onPressed: () {},
-                            ),
-                          ),
-
-                          const SizedBox(height: 28),
-
-                          // ── Divider
-                          FadeTransition(
-                            opacity: _f3,
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Divider(
-                                    color: PromptaWelcomeTheme.border,
-                                    thickness: 1,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 14,
-                                  ),
-                                  child: Text(
-                                    'or',
-                                    style: GoogleFonts.raleway(
-                                      color: PromptaWelcomeTheme.textMuted,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Divider(
-                                    color: PromptaWelcomeTheme.border,
-                                    thickness: 1,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          const SizedBox(height: 26),
-
-                          // ── Sign up link
-                          FadeTransition(
-                            opacity: _f4,
-                            child: Center(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "Don't have an account? ",
-                                    style: GoogleFonts.raleway(
-                                      color: Colors.white60,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                  TextButton(
-                                    child: Text(
-                                      'Sign up',
-                                      style: GoogleFonts.raleway(
-                                        color: PromptaWelcomeTheme.accent,
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                    onPressed: () {
-                                      Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => SignUpPage(),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 28),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 }
+
+
