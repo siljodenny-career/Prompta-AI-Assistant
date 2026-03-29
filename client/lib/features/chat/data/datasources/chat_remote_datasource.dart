@@ -8,10 +8,9 @@ abstract class ChatRemoteDatasource {
 }
 
 class ChatRemoteDatasourceImpl extends ChatRemoteDatasource {
-  // ⚠️ Change to production URL before deploying:
-  // Production: 'https://prompta-ai-assistant.onrender.com'
+  // Local dev: 'http://localhost:5000'
   // Android Emulator: 'http://10.0.2.2:5000'
-  final String baseUrl = 'http://localhost:5000';
+  final String baseUrl = 'https://prompta-ai-assistant.onrender.com';
 
   @override
   Stream<String> fetchApiResponse(List<Message> chatHistory) async* {
