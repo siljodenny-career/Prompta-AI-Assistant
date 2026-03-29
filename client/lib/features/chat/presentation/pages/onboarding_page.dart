@@ -5,6 +5,7 @@ import 'package:client/features/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:client/features/chat/presentation/pages/chat_page.dart';
 import 'package:client/features/chat/presentation/widgets/basic_features.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -14,8 +15,15 @@ class OnboardingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) {
+          SystemNavigator.pop();
+        }
+      },
+      child: SafeArea(
+        child: Scaffold(
         body: Container(
           // color: Colors.brown,
           width: ScreenConfig.screenWidth,
@@ -117,6 +125,7 @@ class OnboardingPage extends StatelessWidget {
             ],
           ),
         ),
+      ),
       ),
     );
   }

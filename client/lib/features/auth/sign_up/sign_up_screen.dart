@@ -310,10 +310,14 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                                           icon: Icons.lock_outline_rounded,
                                           controller: _passCtrl,
                                           obscure: true,
-                                          validator: (v) =>
-                                              (v == null || v.length < 6)
-                                              ? 'Min 6 characters'
-                                              : null,
+                                          validator: (v) {
+                                          if (v == null || v.length < 6) return 'Min 6 characters';
+                                          if (!RegExp(r'[A-Z]').hasMatch(v)) return 'Need at least one uppercase letter';
+                                          if (!RegExp(r'[a-z]').hasMatch(v)) return 'Need at least one lowercase letter';
+                                          if (!RegExp(r'[0-9]').hasMatch(v)) return 'Need at least one number';
+                                          if (!RegExp(r'[!@#\$%^&*(),.?":{}|<>]').hasMatch(v)) return 'Need at least one special character';
+                                          return null;
+                                        },
                                         ),
                                         PasswordStrength(password: _password),
                                       ],

@@ -7,10 +7,12 @@ import 'package:client/features/chat/presentation/widgets/message_bubble.dart';
 import 'package:client/features/chat/presentation/widgets/prompt_input_field.dart';
 import 'package:client/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
+import 'package:user_repository/user_repository.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -42,16 +44,23 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthenticationBloc, AuthenticationState>(
-      listener: (context, state) {
-        if (state.status == AuthenticationStatus.unauthenticated) {
-          Navigator.of(context).popUntil((route) => route.isFirst);
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) {
+          SystemNavigator.pop();
         }
       },
-      child: SafeArea(
-        child: Scaffold(
-          drawer: _sidebarmenu(),
-          appBar: _appBar(),
+      child: BlocListener<AuthenticationBloc, AuthenticationState>(
+        listener: (context, state) {
+          if (state.status == AuthenticationStatus.unauthenticated) {
+            Navigator.of(context).popUntil((route) => route.isFirst);
+          }
+        },
+        child: SafeArea(
+          child: Scaffold(
+            drawer: _sidebarmenu(),
+            appBar: _appBar(),
           body: BlocConsumer<ChatBloc, ChatState>(
             listener: (context, state) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -129,7 +138,51 @@ class _ChatPageState extends State<ChatPage> {
           ),
         ),
       ),
+      ),
     );
+  }
+
+  Widget _userTile(String name, String initials) {
+    return Padding(
+      padding: EdgeInsets.all(12),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 18,
+            backgroundColor: const Color(0xFF5137E6),
+            child: Text(
+              initials,
+              style: GoogleFonts.raleway(
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              name,
+              style: GoogleFonts.raleway(
+                fontSize: 16,
+                color: Colors.white38,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _getInitials(String name) {
+    final parts = name.trim().split(RegExp(r'\s+'));
+    if (parts.isEmpty || parts[0].isEmpty) return '?';
+    final first = parts[0][0].toUpperCase();
+    if (parts.length > 1 && parts[1].isNotEmpty) {
+      return '$first${parts[1][0].toUpperCase()}';
+    }
+    return first;
   }
 
   //SidebarMenu widget
@@ -287,25 +340,24 @@ class _ChatPageState extends State<ChatPage> {
             icon: Icons.logout_rounded,
           ),
           Divider(),
-          Padding(
-            padding: EdgeInsets.all(12),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  radius: 18,
-                  backgroundColor: Colors.black,
-                  child: Center(child: Text("GU")),
-                ),
-                SizedBox(width: 10),
-                Text(
-                  "Guest User",
-                  style: GoogleFonts.raleway(
-                    fontSize: 16,
-                    color: Colors.white38,
-                  ),
-                ),
-              ],
-            ),
+          BlocBuilder<AuthenticationBloc, AuthenticationState>(
+            builder: (context, state) {
+              final user = state.user;
+              if (user == null) {
+                return _userTile('Guest User', 'G');
+              }
+              final userRepo = context.read<UserRepository>();
+              return FutureBuilder<MyUser>(
+                future: userRepo.getUserData(user.uid),
+                builder: (context, snapshot) {
+                  final name = (snapshot.data != null && snapshot.data!.name.isNotEmpty)
+                      ? snapshot.data!.name
+                      : user.displayName ?? 'Guest User';
+                  final initials = _getInitials(name);
+                  return _userTile(name, initials);
+                },
+              );
+            },
           ),
         ],
       ),
