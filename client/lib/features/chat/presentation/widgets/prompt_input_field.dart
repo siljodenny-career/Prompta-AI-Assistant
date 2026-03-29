@@ -1,6 +1,7 @@
 import 'package:client/features/chat/presentation/blocs/chat_bloc/chat_bloc.dart';
 import 'package:client/features/chat/presentation/widgets/animated_texthint.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -19,7 +20,7 @@ class _PromptInputFieldState extends State<PromptInputField> {
 
   void _sendMessage() {
     if (_controller.text.isNotEmpty) {
-      // Dispatch the event to the Bloc
+      HapticFeedback.lightImpact();
       context.read<ChatBloc>().add(SendChatEvent(_controller.text));
       _controller.clear();
       setState(() {
@@ -60,12 +61,18 @@ class _PromptInputFieldState extends State<PromptInputField> {
         listener: (context, state) {
           _wasLoading = state.isLoading;
         },
-        child: Container(
+        child: Builder(
+          builder: (context) {
+            final isDark = Theme.of(context).brightness == Brightness.dark;
+            return Container(
       margin: EdgeInsets.fromLTRB(10, 10, 10, 20),
       padding: const EdgeInsets.fromLTRB(25, 0, 6, 0),
       decoration: BoxDecoration(
-        color: Colors.white12,
+        color: isDark ? Colors.white12 : Colors.black.withAlpha(13),
         borderRadius: BorderRadius.circular(40),
+        border: isDark
+            ? null
+            : Border.all(color: Colors.black.withAlpha(30), width: 1),
       ),
       child: Row(
         children: [
@@ -81,22 +88,25 @@ class _PromptInputFieldState extends State<PromptInputField> {
                         child: AnimatedHint(),
                       )
                     : SizedBox(),
-                TextField(
-                  focusNode: _focusNode,
-                  style: GoogleFonts.raleway(color: Colors.white60),
-                  textCapitalization: TextCapitalization.sentences,
-                  controller: _controller,
-                  textInputAction: TextInputAction.send,
-                  onSubmitted: (_) => _sendMessage(),
-                  maxLines: null,
-                  autocorrect: true,
-                  cursorColor: Colors.blue,
-                  cursorHeight: 20,
-                  
-                  decoration: const InputDecoration(
-                    hintText: "",
-                    alignLabelWithHint: true,
-                    border: InputBorder.none,
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxHeight: 120),
+                  child: TextField(
+                    focusNode: _focusNode,
+                    style: GoogleFonts.raleway(color: Colors.white60),
+                    textCapitalization: TextCapitalization.sentences,
+                    controller: _controller,
+                    textInputAction: TextInputAction.send,
+                    onSubmitted: (_) => _sendMessage(),
+                    minLines: 1,
+                    maxLines: 5,
+                    autocorrect: true,
+                    cursorColor: Colors.blue,
+                    cursorHeight: 20,
+                    decoration: const InputDecoration(
+                      hintText: "",
+                      alignLabelWithHint: true,
+                      border: InputBorder.none,
+                    ),
                   ),
                 ),
               ],
@@ -127,7 +137,9 @@ class _PromptInputFieldState extends State<PromptInputField> {
           ),
         ],
       ),
-    ),
+    );
+          },
+        ),
     ),
     );
   }

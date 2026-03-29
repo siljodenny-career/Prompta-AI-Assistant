@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'entities/entities.dart';
 import 'models/models.dart';
 import 'user_repo.dart';
 
@@ -27,6 +28,7 @@ class FirebaseUserRepo implements UserRepository {
         email: myUser.email,
         password: password,
       );
+      await user.user!.updateDisplayName(myUser.name);
       myUser = myUser.copywith(userId: user.user!.uid);
       return myUser;
     } catch (e) {
@@ -67,6 +69,20 @@ class FirebaseUserRepo implements UserRepository {
     } catch (e) {
       log(e.toString());
       rethrow;
+    }
+  }
+
+  @override
+  Future<MyUser> getUserData(String userId) async {
+    try {
+      final doc = await usersCollection.doc(userId).get();
+      if (doc.exists) {
+        return MyUser.fromEntity(MyuserEntity.fromDocument(doc.data()!));
+      }
+      return MyUser.empty;
+    } catch (e) {
+      log(e.toString());
+      return MyUser.empty;
     }
   }
 }

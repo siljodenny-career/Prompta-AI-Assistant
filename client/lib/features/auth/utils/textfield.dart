@@ -57,7 +57,7 @@ class _PromptaFieldState extends State<PromptaField> {
           obscureText: widget.obscure && !_showPass,
           keyboardType: widget.keyboardType,
           validator: widget.validator,
-          style: GoogleFonts.raleway(
+          style: GoogleFonts.dmSans(
             color: PromptaWelcomeTheme.textPrimary,
             fontSize: 15,
             fontWeight: FontWeight.w500,
@@ -69,7 +69,7 @@ class _PromptaFieldState extends State<PromptaField> {
             ),
             border: InputBorder.none,
             hintText: widget.label,
-            hintStyle: GoogleFonts.raleway(
+            hintStyle: GoogleFonts.dmSans(
               color: PromptaWelcomeTheme.textMuted,
               fontSize: 14,
             ),
