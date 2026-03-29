@@ -8,7 +8,7 @@ class AnimatedHint extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final hintColor = isDark ? Colors.white38 : Colors.black38;
+    final hintColor = isDark ? Colors.white70 : Colors.black87;
 
     return DefaultTextStyle(
       style: TextStyle(

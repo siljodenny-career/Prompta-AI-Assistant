@@ -4,11 +4,13 @@ import 'package:client/features/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:client/features/auth/blocs/sign_up_bloc/sign_up_bloc.dart';
 import 'package:client/features/auth/utils/prompta_logo.dart';
 import 'package:client/features/chat/presentation/blocs/chat_bloc/chat_bloc.dart';
+import 'package:client/features/chat/presentation/pages/chat_page.dart';
 import 'package:client/features/chat/presentation/pages/onboarding_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/theme/app_theme.dart';
 import 'features/auth/sign_in/sign_in_screen.dart';
@@ -52,7 +54,9 @@ class _MyAppViewState extends State<MyAppView> {
                       context
                           .read<ChatBloc>()
                           .add(SetUserIdEvent(state.user!.uid));
-                      return const _LoadingTransition();
+                      return _LoadingTransition(
+                        userId: state.user!.uid,
+                      );
                     } else {
                       return MultiBlocProvider(
                         providers: [
@@ -163,9 +167,10 @@ class _SplashScreenState extends State<_SplashScreen>
   }
 }
 
-/// Loading transition after sign-in — Lottie animation only, no logo.
+/// Loading transition after auth — shows onboarding only for new sign-ups.
 class _LoadingTransition extends StatefulWidget {
-  const _LoadingTransition();
+  final String userId;
+  const _LoadingTransition({required this.userId});
 
   @override
   State<_LoadingTransition> createState() => _LoadingTransitionState();
@@ -173,20 +178,37 @@ class _LoadingTransition extends StatefulWidget {
 
 class _LoadingTransitionState extends State<_LoadingTransition> {
   bool _showLoading = true;
+  bool? _showOnboarding;
 
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(milliseconds: 1800), () {
-      if (mounted) {
-        setState(() => _showLoading = false);
+    _checkOnboarding();
+  }
+
+  Future<void> _checkOnboarding() async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'onboarding_done_${widget.userId}';
+    final hasSeenOnboarding = prefs.getBool(key) ?? false;
+
+    // Small delay for loading animation
+    await Future.delayed(const Duration(milliseconds: 1800));
+
+    if (mounted) {
+      if (!hasSeenOnboarding) {
+        // Mark as done for next time
+        await prefs.setBool(key, true);
       }
-    });
+      setState(() {
+        _showLoading = false;
+        _showOnboarding = !hasSeenOnboarding;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_showLoading) {
+    if (_showLoading || _showOnboarding == null) {
       return Scaffold(
         body: Center(
           child: Column(
@@ -205,7 +227,18 @@ class _LoadingTransitionState extends State<_LoadingTransition> {
       );
     }
 
-    return const OnboardingPage();
+    if (_showOnboarding!) {
+      return const OnboardingPage();
+    }
+
+    // Returning user (sign-in) — go straight to chat
+    return BlocProvider(
+      create: (context) => SignInBloc(
+        userRepository:
+            context.read<AuthenticationBloc>().userRepository,
+      ),
+      child: const ChatPage(),
+    );
   }
 }
 
