@@ -1,11 +1,10 @@
-import 'package:client/core/components/custom_button.dart';
 import 'package:client/core/components/screen_config.dart';
 import 'package:client/core/theme/theme_cubit.dart';
 import 'package:client/features/auth/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:client/features/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:client/features/chat/presentation/blocs/chat_bloc/chat_bloc.dart';
-import 'package:client/features/chat/presentation/widgets/message_bubble.dart';
 import 'package:client/features/chat/presentation/widgets/chat_background.dart';
+import 'package:client/features/chat/presentation/widgets/message_bubble.dart';
 import 'package:client/features/chat/presentation/widgets/prompt_input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,24 +23,8 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   final ScrollController _scrollController = ScrollController();
-
-  bool _hasClicked = false;
-
-  void _scrollToBottom() {
-    if (_scrollController.hasClients) {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-    }
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
 
   @override
   Widget build(BuildContext context) {
@@ -90,13 +73,14 @@ class _ChatPageState extends State<ChatPage> {
                                       return MessageBubble(
                                         message: state.messages[index],
                                         isLast: isLast,
-                                        onRegenerate: isLast &&
+                                        onRegenerate:
+                                            isLast &&
                                                 !state.messages[index].isUser &&
                                                 !state.isLoading
                                             ? () {
-                                                context
-                                                    .read<ChatBloc>()
-                                                    .add(RegenerateResponseEvent());
+                                                context.read<ChatBloc>().add(
+                                                  RegenerateResponseEvent(),
+                                                );
                                               }
                                             : null,
                                       );
@@ -109,8 +93,7 @@ class _ChatPageState extends State<ChatPage> {
                                         opacity: 0.3,
                                         child: Lottie.asset(
                                           "assets/animations/infinity_loading.json",
-                                          width:
-                                              ScreenConfig.screenWidth * 0.2,
+                                          width: ScreenConfig.screenWidth * 0.2,
                                           repeat: true,
                                           animate: true,
                                           filterQuality: FilterQuality.high,
@@ -161,334 +144,11 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  Widget _userTile(String name, String initials) {
-    return Padding(
-      padding: EdgeInsets.all(12),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 18,
-            backgroundColor: const Color(0xFF5137E6),
-            child: Text(
-              initials,
-              style: GoogleFonts.raleway(
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ),
-          SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              name,
-              style: GoogleFonts.raleway(
-                fontSize: 16,
-                color: Colors.white38,
-              ),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  String _getInitials(String name) {
-    final parts = name.trim().split(RegExp(r'\s+'));
-    if (parts.isEmpty || parts[0].isEmpty) return '?';
-    final first = parts[0][0].toUpperCase();
-    if (parts.length > 1 && parts[1].isNotEmpty) {
-      return '$first${parts[1][0].toUpperCase()}';
-    }
-    return first;
-  }
-
-  //SidebarMenu widget
-  Widget _sidebarmenu(bool isDark) {
-    return Drawer(
-      child: Column(
-        children: [
-          DrawerHeader(
-            duration: Duration(milliseconds: 200),
-            decoration: BoxDecoration(),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: Icon(Icons.all_inclusive_rounded),
-                    ),
-                    const Spacer(),
-                    BlocBuilder<ThemeCubit, ThemeMode>(
-                      builder: (context, mode) {
-                        final isDarkMode = mode == ThemeMode.dark;
-                        return GestureDetector(
-                          onTap: () =>
-                              context.read<ThemeCubit>().toggleTheme(),
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
-                            width: 48,
-                            height: 26,
-                            padding: const EdgeInsets.all(2),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(14),
-                              color: isDarkMode
-                                  ? Colors.white.withAlpha(25)
-                                  : Colors.black.withAlpha(25),
-                            ),
-                            child: AnimatedAlign(
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeInOut,
-                              alignment: isDarkMode
-                                  ? Alignment.centerLeft
-                                  : Alignment.centerRight,
-                              child: Container(
-                                width: 22,
-                                height: 22,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: isDarkMode
-                                      ? const Color(0xFF5137E6)
-                                      : const Color(0xFFFFB300),
-                                ),
-                                child: Icon(
-                                  isDarkMode
-                                      ? Icons.dark_mode_rounded
-                                      : Icons.light_mode_rounded,
-                                  size: 13,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Prompta",
-                      style: GoogleFonts.raleway(fontSize: 24),
-                    ),
-                    Text(
-                      "AI powered assistant ",
-                      style: GoogleFonts.raleway(
-                        color: isDark ? Colors.white38 : Colors.black38,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          // Search bar section
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Row(
-              children: [
-                Expanded(
-                  child: AnimatedSwitcher(
-                    duration: Duration(milliseconds: 300),
-                    transitionBuilder: (child, animation) {
-                      return FadeTransition(
-                        opacity: animation,
-                        child: SizeTransition(
-                          sizeFactor: animation,
-                          axis: Axis.horizontal,
-                          axisAlignment: -1,
-                          child: child,
-                        ),
-                      );
-                    },
-                    child: _hasClicked
-                        ? Container(
-                            height: 34,
-                            child: TextField(
-                              style: TextStyle(fontSize: 14),
-                              decoration: InputDecoration(
-                                hintText: "Search",
-                                hintStyle:
-                                    GoogleFonts.raleway(fontSize: 14),
-                                prefixIcon:
-                                    Icon(Icons.search, size: 18),
-                                contentPadding:
-                                    EdgeInsets.symmetric(vertical: 0),
-                                filled: true,
-                                fillColor: isDark
-                                    ? Colors.white12
-                                    : Colors.black.withAlpha(13),
-                                border: OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.circular(20),
-                                  borderSide: BorderSide.none,
-                                ),
-                              ),
-                            ),
-                          )
-                        : const SizedBox.shrink(),
-                  ),
-                ),
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      _hasClicked = !_hasClicked;
-                    });
-                  },
-                  icon: Icon(Icons.search_rounded, size: 20),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 8),
-          Divider(height: 1),
-          // New Chat button
-          ListTile(
-            leading: Icon(Icons.add_comment_rounded),
-            title: Text("New Chat",
-                style: GoogleFonts.raleway(fontSize: 16)),
-            onTap: () {
-              Navigator.pop(context);
-              context.read<ChatBloc>().add(NewChatEvent());
-            },
-          ),
-          Divider(height: 1),
-          // Chat History from Firestore
-          Expanded(
-            child: BlocBuilder<ChatBloc, ChatState>(
-              builder: (context, state) {
-                if (state.threads.isEmpty) {
-                  return Center(
-                    child: Text(
-                      "No chat history yet",
-                      style: GoogleFonts.raleway(
-                        color: isDark ? Colors.white24 : Colors.black26,
-                        fontSize: 14,
-                      ),
-                    ),
-                  );
-                }
-                return ListView.builder(
-                  padding: EdgeInsets.zero,
-                  itemCount: state.threads.length,
-                  itemBuilder: (context, index) {
-                    final thread = state.threads[index];
-                    final isActive =
-                        thread.id == state.currentThreadId;
-                    return Dismissible(
-                      key: Key(thread.id),
-                      direction: DismissDirection.endToStart,
-                      background: Container(
-                        alignment: Alignment.centerRight,
-                        padding: const EdgeInsets.only(right: 20),
-                        color: Colors.red.withAlpha(51),
-                        child: Icon(Icons.delete_outline,
-                            color: Colors.red),
-                      ),
-                      onDismissed: (_) {
-                        context
-                            .read<ChatBloc>()
-                            .add(DeleteThreadEvent(thread.id));
-                      },
-                      child: ListTile(
-                        dense: true,
-                        selected: isActive,
-                        selectedTileColor: isDark
-                            ? Colors.white.withAlpha(13)
-                            : Colors.black.withAlpha(13),
-                        leading: Icon(
-                          Icons.chat_bubble_outline_rounded,
-                          size: 18,
-                          color: isActive
-                              ? const Color(0xFF5137E6)
-                              : null,
-                        ),
-                        title: Text(
-                          thread.title,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.raleway(
-                            fontSize: 14,
-                            fontWeight: isActive
-                                ? FontWeight.w600
-                                : FontWeight.normal,
-                          ),
-                        ),
-                        subtitle: Text(
-                          _formatDate(thread.updatedAt),
-                          style: GoogleFonts.dmSans(
-                            fontSize: 11,
-                            color: isDark
-                                ? Colors.white24
-                                : Colors.black26,
-                          ),
-                        ),
-                        onTap: () {
-                          Navigator.pop(context);
-                          context
-                              .read<ChatBloc>()
-                              .add(LoadThreadEvent(thread.id));
-                        },
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-          Divider(height: 1),
-          const SizedBox(height: 8),
-          CustomButton(
-            text: 'Logout',
-            onPressed: () {
-              context.read<SignInBloc>().add(SignOutRequired());
-            },
-            icon: Icons.logout_rounded,
-          ),
-          Divider(),
-          BlocBuilder<AuthenticationBloc, AuthenticationState>(
-            builder: (context, state) {
-              final user = state.user;
-              if (user == null) {
-                return _userTile('Guest User', 'G');
-              }
-              final userRepo = context.read<UserRepository>();
-              return FutureBuilder<MyUser>(
-                future: userRepo.getUserData(user.uid),
-                builder: (context, snapshot) {
-                  final name = (snapshot.data != null &&
-                          snapshot.data!.name.isNotEmpty)
-                      ? snapshot.data!.name
-                      : user.displayName ?? 'Guest User';
-                  final initials = _getInitials(name);
-                  return _userTile(name, initials);
-                },
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  String _formatDate(DateTime date) {
-    final now = DateTime.now();
-    final diff = now.difference(date);
-    if (diff.inMinutes < 1) return 'Just now';
-    if (diff.inHours < 1) return '${diff.inMinutes}m ago';
-    if (diff.inDays < 1) return '${diff.inHours}h ago';
-    if (diff.inDays < 7) return '${diff.inDays}d ago';
-    return '${date.day}/${date.month}/${date.year}';
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _searchController.dispose();
+    super.dispose();
   }
 
   // AppBar Widget
@@ -511,7 +171,446 @@ class _ChatPageState extends State<ChatPage> {
       ),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       scrolledUnderElevation: 0.0,
-      actions: const [],
+      actions: [
+        BlocBuilder<AuthenticationBloc, AuthenticationState>(
+          builder: (context, state) {
+            final user = state.user;
+            if (user == null) return const SizedBox.shrink();
+            final userRepo = context.read<UserRepository>();
+            return FutureBuilder<MyUser>(
+              future: userRepo.getUserData(user.uid),
+              builder: (context, snapshot) {
+                final name = (snapshot.data != null &&
+                        snapshot.data!.name.isNotEmpty)
+                    ? snapshot.data!.name
+                    : user.displayName ?? 'U';
+                final initials = _getInitials(name);
+                return _AvatarChip(
+                  name: name,
+                  initials: initials,
+                );
+              },
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  String _formatDate(DateTime date) {
+    final now = DateTime.now();
+    final diff = now.difference(date);
+    if (diff.inMinutes < 1) return 'Just now';
+    if (diff.inHours < 1) return '${diff.inMinutes}m ago';
+    if (diff.inDays < 1) return '${diff.inHours}h ago';
+    if (diff.inDays < 7) return '${diff.inDays}d ago';
+    return '${date.day}/${date.month}/${date.year}';
+  }
+
+  String _getInitials(String name) {
+    final parts = name.trim().split(RegExp(r'\s+'));
+    if (parts.isEmpty || parts[0].isEmpty) return '?';
+    final first = parts[0][0].toUpperCase();
+    if (parts.length > 1 && parts[1].isNotEmpty) {
+      return '$first${parts[1][0].toUpperCase()}';
+    }
+    return first;
+  }
+
+  void _scrollToBottom() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
+  }
+
+  //SidebarMenu widget
+  Widget _sidebarmenu(bool isDark) {
+    return Drawer(
+      child: Column(
+        children: [
+          SafeArea(
+            bottom: false,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(4, 8, 8, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Top row: logo + theme toggle
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: Icon(Icons.all_inclusive_rounded),
+                      ),
+                      const Spacer(),
+                      BlocBuilder<ThemeCubit, ThemeMode>(
+                        builder: (context, mode) {
+                          final isDarkMode = mode == ThemeMode.dark;
+                          return GestureDetector(
+                            onTap: () =>
+                                context.read<ThemeCubit>().toggleTheme(),
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeInOut,
+                              width: 48,
+                              height: 26,
+                              padding: const EdgeInsets.all(2),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(14),
+                                color: isDarkMode
+                                    ? Colors.white.withAlpha(25)
+                                    : Colors.black.withAlpha(25),
+                              ),
+                              child: AnimatedAlign(
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeInOut,
+                                alignment: isDarkMode
+                                    ? Alignment.centerLeft
+                                    : Alignment.centerRight,
+                                child: Container(
+                                  width: 22,
+                                  height: 22,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: isDarkMode
+                                        ? const Color(0xFF5137E6)
+                                        : const Color(0xFFFFB300),
+                                  ),
+                                  child: Icon(
+                                    isDarkMode
+                                        ? Icons.dark_mode_rounded
+                                        : Icons.light_mode_rounded,
+                                    size: 13,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  // Prompta title
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Prompta",
+                          style: GoogleFonts.raleway(fontSize: 22),
+                        ),
+                        Text(
+                          "AI powered assistant",
+                          style: GoogleFonts.raleway(
+                            color: isDark ? Colors.white38 : Colors.black38,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                ],
+              ),
+            ),
+          ),
+          // Search bar section
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: SizedBox(
+              height: 34,
+              child: TextField(
+                controller: _searchController,
+                onChanged: (value) {
+                  setState(() => _searchQuery = value.trim().toLowerCase());
+                },
+                style: TextStyle(fontSize: 14),
+                decoration: InputDecoration(
+                  hintText: "Search chats...",
+                  hintStyle: GoogleFonts.raleway(fontSize: 14),
+                  prefixIcon: Icon(Icons.search, size: 18),
+                  contentPadding: EdgeInsets.symmetric(vertical: 0),
+                  filled: true,
+                  fillColor: isDark
+                      ? Colors.white12
+                      : Colors.black.withAlpha(13),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Divider(height: 1),
+          // New Chat button
+          ListTile(
+            leading: Icon(Icons.auto_awesome),
+            title: Text("New Chat", style: GoogleFonts.raleway(fontSize: 16)),
+            onTap: () {
+              Navigator.pop(context);
+              context.read<ChatBloc>().add(NewChatEvent());
+            },
+          ),
+          Divider(height: 1),
+          // Chat History from Firestore
+          Expanded(
+            child: BlocBuilder<ChatBloc, ChatState>(
+              builder: (context, state) {
+                final filtered = _searchQuery.isEmpty
+                    ? state.threads
+                    : state.threads
+                        .where((t) =>
+                            t.title.toLowerCase().contains(_searchQuery))
+                        .toList();
+
+                if (filtered.isEmpty) {
+                  return Center(
+                    child: Text(
+                      _searchQuery.isEmpty
+                          ? "No chat history yet"
+                          : "No results found",
+                      style: GoogleFonts.raleway(
+                        color: isDark ? Colors.white24 : Colors.black26,
+                        fontSize: 14,
+                      ),
+                    ),
+                  );
+                }
+                return ListView.builder(
+                  padding: EdgeInsets.zero,
+                  itemCount: filtered.length,
+                  itemBuilder: (context, index) {
+                    final thread = filtered[index];
+                    final isActive = thread.id == state.currentThreadId;
+                    return Dismissible(
+                      key: Key(thread.id),
+                      direction: DismissDirection.endToStart,
+                      background: Container(
+                        alignment: Alignment.centerRight,
+                        padding: const EdgeInsets.only(right: 20),
+                        color: Colors.red.withAlpha(51),
+                        child: Icon(Icons.delete_outline, color: Colors.red),
+                      ),
+                      onDismissed: (_) {
+                        context.read<ChatBloc>().add(
+                          DeleteThreadEvent(thread.id),
+                        );
+                      },
+                      child: ListTile(
+                        dense: true,
+                        selected: isActive,
+                        selectedTileColor: isDark
+                            ? Colors.white.withAlpha(13)
+                            : Colors.black.withAlpha(13),
+                        leading: Icon(
+                          Icons.chat_bubble_outline_rounded,
+                          size: 18,
+                          color: isActive ? const Color(0xFF5137E6) : null,
+                        ),
+                        title: Text(
+                          thread.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.raleway(
+                            fontSize: 14,
+                            fontWeight: isActive
+                                ? FontWeight.w600
+                                : FontWeight.normal,
+                          ),
+                        ),
+                        subtitle: Text(
+                          _formatDate(thread.updatedAt),
+                          style: GoogleFonts.dmSans(
+                            fontSize: 11,
+                            color: isDark ? Colors.white24 : Colors.black26,
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.pop(context);
+                          context.read<ChatBloc>().add(
+                            LoadThreadEvent(thread.id),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: 20),
+          BlocBuilder<AuthenticationBloc, AuthenticationState>(
+            builder: (context, state) {
+              final user = state.user;
+              if (user == null) {
+                return _userTileCompact('Guest User', 'G');
+              }
+              final userRepo = context.read<UserRepository>();
+              return FutureBuilder<MyUser>(
+                future: userRepo.getUserData(user.uid),
+                builder: (context, snapshot) {
+                  final name = (snapshot.data != null &&
+                          snapshot.data!.name.isNotEmpty)
+                      ? snapshot.data!.name
+                      : user.displayName ?? 'Guest User';
+                  final initials = _getInitials(name);
+                  return _userTileCompact(name, initials);
+                },
+              );
+            },
+          ),
+          const SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: () {
+                  context.read<SignInBloc>().add(SignOutRequired());
+                },
+                icon: Icon(Icons.logout_rounded, color: Colors.redAccent.shade100),
+                label: Text(
+                  'Logout',
+                  style: GoogleFonts.raleway(color: Colors.redAccent.shade100),
+                ),
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: Colors.redAccent.shade100, width: 1),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  backgroundColor: Colors.transparent,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+        ],
+      ),
+    );
+  }
+
+  Widget _userTileCompact(String name, String initials) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 16,
+            backgroundColor: const Color(0xFF5137E6),
+            child: Text(
+              initials,
+              style: GoogleFonts.raleway(
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              name,
+              style: GoogleFonts.raleway(
+                fontSize: 14,
+                color: isDark ? Colors.white54 : Colors.black54,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AvatarChip extends StatefulWidget {
+  final String name;
+  final String initials;
+  const _AvatarChip({required this.name, required this.initials});
+
+  @override
+  State<_AvatarChip> createState() => _AvatarChipState();
+}
+
+class _AvatarChipState extends State<_AvatarChip> {
+  bool _expanded = false;
+
+  void _toggle() {
+    setState(() => _expanded = !_expanded);
+    if (_expanded) {
+      Future.delayed(const Duration(seconds: 3), () {
+        if (mounted && _expanded) {
+          setState(() => _expanded = false);
+        }
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 12),
+      child: GestureDetector(
+        onTap: _toggle,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          height: 32,
+          padding: EdgeInsets.only(
+            left: 0,
+            right: _expanded ? 12 : 0,
+          ),
+          decoration: BoxDecoration(
+            color: const Color(0xFF5137E6),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircleAvatar(
+                radius: 16,
+                backgroundColor: const Color(0xFF5137E6),
+                child: Text(
+                  widget.initials,
+                  style: GoogleFonts.raleway(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              AnimatedSize(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+                child: _expanded
+                    ? Padding(
+                        padding: const EdgeInsets.only(left: 4),
+                        child: Text(
+                          widget.name,
+                          style: GoogleFonts.raleway(
+                            fontSize: 12,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      )
+                    : const SizedBox.shrink(),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

@@ -68,7 +68,7 @@ class _PromptInputFieldState extends State<PromptInputField> {
       margin: EdgeInsets.fromLTRB(10, 10, 10, 20),
       padding: const EdgeInsets.fromLTRB(25, 0, 6, 0),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white12 : Colors.black.withAlpha(13),
+        color: isDark ? const Color(0xFF1A1A1A) : const Color(0xFFEAEAEA),
         borderRadius: BorderRadius.circular(40),
         border: isDark
             ? null
@@ -92,7 +92,9 @@ class _PromptInputFieldState extends State<PromptInputField> {
                   constraints: const BoxConstraints(maxHeight: 120),
                   child: TextField(
                     focusNode: _focusNode,
-                    style: GoogleFonts.raleway(color: Colors.white60),
+                    style: GoogleFonts.raleway(
+                      color: isDark ? Colors.white60 : Colors.black87,
+                    ),
                     textCapitalization: TextCapitalization.sentences,
                     controller: _controller,
                     textInputAction: TextInputAction.send,
