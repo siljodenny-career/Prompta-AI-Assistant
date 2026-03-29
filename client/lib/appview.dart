@@ -1,7 +1,9 @@
+import 'package:client/core/theme/theme_cubit.dart';
 import 'package:client/features/auth/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:client/features/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:client/features/auth/blocs/sign_up_bloc/sign_up_bloc.dart';
 import 'package:client/features/auth/utils/prompta_logo.dart';
+import 'package:client/features/chat/presentation/blocs/chat_bloc/chat_bloc.dart';
 import 'package:client/features/chat/presentation/pages/onboarding_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -34,39 +36,48 @@ class _MyAppViewState extends State<MyAppView> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Prompta',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.darkTheme,
-      home: _showSplash
-          ? const _SplashScreen()
-          : BlocBuilder<AuthenticationBloc, AuthenticationState>(
-              builder: (context, state) {
-                if (state.status == AuthenticationStatus.authenticated) {
-                  return const _LoadingTransition();
-                } else {
-                  return MultiBlocProvider(
-                    providers: [
-                      BlocProvider<SignInBloc>(
-                        create: (context) => SignInBloc(
-                          userRepository: context
-                              .read<AuthenticationBloc>()
-                              .userRepository,
-                        ),
-                      ),
-                      BlocProvider<SignUpBloc>(
-                        create: (context) => SignUpBloc(
-                          userRepository: context
-                              .read<AuthenticationBloc>()
-                              .userRepository,
-                        ),
-                      ),
-                    ],
-                    child: const AuthNavigator(),
-                  );
-                }
-              },
-            ),
+    return BlocBuilder<ThemeCubit, ThemeMode>(
+      builder: (context, themeMode) {
+        return MaterialApp(
+          title: 'Prompta',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: themeMode,
+          home: _showSplash
+              ? const _SplashScreen()
+              : BlocBuilder<AuthenticationBloc, AuthenticationState>(
+                  builder: (context, state) {
+                    if (state.status == AuthenticationStatus.authenticated) {
+                      context
+                          .read<ChatBloc>()
+                          .add(SetUserIdEvent(state.user!.uid));
+                      return const _LoadingTransition();
+                    } else {
+                      return MultiBlocProvider(
+                        providers: [
+                          BlocProvider<SignInBloc>(
+                            create: (context) => SignInBloc(
+                              userRepository: context
+                                  .read<AuthenticationBloc>()
+                                  .userRepository,
+                            ),
+                          ),
+                          BlocProvider<SignUpBloc>(
+                            create: (context) => SignUpBloc(
+                              userRepository: context
+                                  .read<AuthenticationBloc>()
+                                  .userRepository,
+                            ),
+                          ),
+                        ],
+                        child: const AuthNavigator(),
+                      );
+                    }
+                  },
+                ),
+        );
+      },
     );
   }
 }
@@ -198,8 +209,7 @@ class _LoadingTransitionState extends State<_LoadingTransition> {
   }
 }
 
-/// Manages navigation between SignIn and SignUp within the auth flow,
-/// keeping both screens under the same BLoC providers.
+/// Manages navigation between SignIn and SignUp within the auth flow.
 class AuthNavigator extends StatefulWidget {
   const AuthNavigator({super.key});
 
@@ -219,8 +229,12 @@ class _AuthNavigatorState extends State<AuthNavigator> {
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 300),
       child: _showSignIn
-          ? SignInPage(key: const ValueKey('signIn'), onNavigateToSignUp: _toggleAuth)
-          : SignUpPage(key: const ValueKey('signUp'), onNavigateToSignIn: _toggleAuth),
+          ? SignInPage(
+              key: const ValueKey('signIn'),
+              onNavigateToSignUp: _toggleAuth)
+          : SignUpPage(
+              key: const ValueKey('signUp'),
+              onNavigateToSignIn: _toggleAuth),
     );
   }
 }

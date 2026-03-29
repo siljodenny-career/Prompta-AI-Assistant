@@ -6,6 +6,26 @@ class AppTheme {
   static final ThemeData darkTheme = ThemeData(
     scaffoldBackgroundColor: AppColors.scaffoldBgColor,
     brightness: Brightness.dark,
-    textTheme: GoogleFonts.ralewayTextTheme(),
+    textTheme: GoogleFonts.ralewayTextTheme(
+      ThemeData.dark().textTheme,
+    ),
+    drawerTheme: const DrawerThemeData(
+      backgroundColor: Color(0xFF0A0A0A),
+    ),
+  );
+
+  static final ThemeData lightTheme = ThemeData(
+    scaffoldBackgroundColor: const Color(0xFFF5F5F5),
+    brightness: Brightness.light,
+    textTheme: GoogleFonts.ralewayTextTheme(
+      ThemeData.light().textTheme,
+    ),
+    drawerTheme: const DrawerThemeData(
+      backgroundColor: Color(0xFFF5F5F5),
+    ),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: Color(0xFFF5F5F5),
+      foregroundColor: Colors.black87,
+    ),
   );
 }

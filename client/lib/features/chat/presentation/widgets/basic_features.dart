@@ -16,7 +16,7 @@ class BasicFeatures extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
- 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -29,21 +29,21 @@ class BasicFeatures extends StatelessWidget {
             children: [
               Text(
                 title,
-                style:  GoogleFonts.raleway(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white
-                    ),
+                style: GoogleFonts.raleway(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
               ),
               Text(
                 description,
                 style: GoogleFonts.raleway(
-                      fontSize: 16,
-                      fontWeight: FontWeight.normal,
-                      color: Colors.white38
-                    ),
+                  fontSize: 16,
+                  fontWeight: FontWeight.normal,
+                  color: isDark ? Colors.white38 : Colors.black45,
+                ),
               ),
-              SizedBox(height: 10,)
+              SizedBox(height: 10),
             ],
           ),
         ),

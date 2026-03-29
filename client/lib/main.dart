@@ -1,3 +1,4 @@
+import 'package:client/core/theme/theme_cubit.dart';
 import 'package:client/features/chat/data/datasources/chat_remote_datasource.dart';
 import 'package:client/features/chat/data/repositories/chat_repository_impl.dart';
 import 'package:client/features/chat/domain/usecases/send_chat_usecase.dart';
@@ -23,8 +24,11 @@ void main() async {
   final useCase = SendChatUsecase(repository);
 
   runApp(
-    BlocProvider(
-      create: (_) => ChatBloc(sendChatUsecase: useCase),
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => ChatBloc(sendChatUsecase: useCase)),
+        BlocProvider(create: (_) => ThemeCubit()),
+      ],
       child: DevicePreview(
         enabled: kDebugMode,
         builder: (context) => MyApp(FirebaseUserRepo()),
