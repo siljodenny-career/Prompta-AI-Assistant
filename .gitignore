@@ -46,3 +46,6 @@ GoogleService-Info.plist
 .dart_tool/
 .pub-cache/
 build/
+
+#Markdown files
+*.md
