@@ -43,13 +43,14 @@ class ChatFirestoreService {
   CollectionReference _messagesCol(String threadId) =>
       _threadsCol.doc(threadId).collection('messages');
 
-  /// Create a new chat thread
+  /// Create a new chat thread — title starts empty, set after AI summarizes
   Future<ChatThread> createThread(String userId) async {
     final now = DateTime.now();
     final thread = ChatThread(
       id: '',
       userId: userId,
-      title: 'New Chat',
+      // ✅ Empty string — will be replaced by AI summary immediately after
+      title: '',
       createdAt: now,
       updatedAt: now,
     );
@@ -79,12 +80,24 @@ class ChatFirestoreService {
     });
   }
 
-  /// Update thread title (based on first user message)
+  /// Update thread title (called by _generateTitle in ChatBloc)
   Future<void> updateThreadTitle(String threadId, String title) async {
     await _threadsCol.doc(threadId).update({
       'title': title,
       'updatedAt': Timestamp.now(),
     });
+  }
+
+  /// ✅ Fallback title generator — used if AI call fails
+  /// Truncates the raw user message to a clean short title
+  String generateTitle(String firstMessage) {
+    final cleaned = firstMessage.trim();
+    if (cleaned.length <= 40) return cleaned;
+    final truncated = cleaned.substring(0, 40);
+    final lastSpace = truncated.lastIndexOf(' ');
+    return lastSpace != -1
+        ? '${truncated.substring(0, lastSpace)}…'
+        : '$truncated…';
   }
 
   /// Delete a thread and all its messages

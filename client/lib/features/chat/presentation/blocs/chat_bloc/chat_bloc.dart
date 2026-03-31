@@ -31,29 +31,21 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   }
 
   void _onSetUserId(SetUserIdEvent event, Emitter<ChatState> emit) {
-    // Skip if already subscribed for this user
     if (_userId == event.userId && _threadsSub != null) return;
     _userId = event.userId;
     _threadsSub?.cancel();
     _threadsSub = _firestoreService.getThreads(_userId!).listen(
       (threads) {
-        if (!isClosed) {
-          add(_ThreadsUpdatedEvent(threads));
-        }
+        if (!isClosed) add(_ThreadsUpdatedEvent(threads));
       },
-      onError: (e) {
-        // Firestore index might be missing — fall back without ordering
-        if (!isClosed) {
-          add(_ThreadsUpdatedEvent([]));
-        }
+      onError: (_) {
+        if (!isClosed) add(_ThreadsUpdatedEvent([]));
       },
     );
   }
 
-  void _onThreadsUpdated(
-      _ThreadsUpdatedEvent event, Emitter<ChatState> emit) {
-    emit(state.copyWith(state.messages, state.isLoading,
-        threads: event.threads));
+  void _onThreadsUpdated(_ThreadsUpdatedEvent event, Emitter<ChatState> emit) {
+    emit(state.copyWith(state.messages, state.isLoading, threads: event.threads));
   }
 
   Future<void> _onNewChat(NewChatEvent event, Emitter<ChatState> emit) async {
@@ -62,8 +54,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     emit(ChatState(threads: state.threads));
   }
 
-  Future<void> _onLoadThread(
-      LoadThreadEvent event, Emitter<ChatState> emit) async {
+  Future<void> _onLoadThread(LoadThreadEvent event, Emitter<ChatState> emit) async {
     _currentThreadId = event.threadId;
     _messages.clear();
     emit(state.copyWith(List.unmodifiable(_messages), true,
@@ -75,8 +66,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         currentThreadId: _currentThreadId));
   }
 
-  Future<void> _onDeleteThread(
-      DeleteThreadEvent event, Emitter<ChatState> emit) async {
+  Future<void> _onDeleteThread(DeleteThreadEvent event, Emitter<ChatState> emit) async {
     await _firestoreService.deleteThread(event.threadId);
     if (_currentThreadId == event.threadId) {
       _messages.clear();
@@ -85,8 +75,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     }
   }
 
-  Future<void> _onSendChat(
-      SendChatEvent event, Emitter<ChatState> emit) async {
+  Future<void> _onSendChat(SendChatEvent event, Emitter<ChatState> emit) async {
     if (event.text.trim().isEmpty) return;
 
     // Create thread if needed
@@ -94,8 +83,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     if (isFirstMessage && _userId != null) {
       final thread = await _firestoreService.createThread(_userId!);
       _currentThreadId = thread.id;
-      // Temporary title until AI summarizes
-      await _firestoreService.updateThreadTitle(_currentThreadId!, 'New Chat');
+      // ✅ REMOVED: the redundant updateThreadTitle('New Chat') line
+      // Title will be set by _generateTitle() after AI responds
     }
 
     // Add user message
@@ -104,12 +93,11 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     emit(state.copyWith(List.unmodifiable(_messages), true,
         currentThreadId: _currentThreadId));
 
-    // Save to Firestore
+    // Save user message to Firestore
     if (_currentThreadId != null) {
       await _firestoreService.addMessage(_currentThreadId!, userMsg);
     }
 
-    // Snapshot messages to send (before adding empty AI placeholder)
     final messagesToSend = List<Message>.unmodifiable(_messages);
 
     // Add empty AI placeholder for typing indicator
@@ -132,16 +120,14 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
       // Save completed AI message to Firestore
       if (_currentThreadId != null) {
-        await _firestoreService.addMessage(
-            _currentThreadId!, _messages.last);
+        await _firestoreService.addMessage(_currentThreadId!, _messages.last);
       }
 
-      // Generate a summarized title after first exchange
+      // ✅ Generate summarized title after first exchange
       if (isFirstMessage && _currentThreadId != null) {
         _generateTitle(event.text);
       }
     } catch (e) {
-      // Remove the empty placeholder and add error message
       _messages.removeLast();
       _messages.add(
         MessageModel(text: "Error: Could not fetch response.", isUser: false),
@@ -151,13 +137,14 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     }
   }
 
-  /// Generate a short summary title for the thread using AI
+  /// Generate a short AI summary title for the thread
   void _generateTitle(String userMessage) async {
     if (_currentThreadId == null) return;
     try {
       final titleMessages = [
         MessageModel(
-          text: 'Summarize this user message into a short title (3-5 words max, no quotes, no punctuation at end): "$userMessage"',
+          text:
+              'Summarize this user message into a short title (3-5 words max, no quotes, no punctuation at end): "$userMessage"',
           isUser: true,
         ),
       ];
@@ -172,7 +159,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       }
     } catch (e) {
       log('Title generation failed: $e');
-      // Fallback: use truncated user message
+      // Fallback: truncate the raw user message
       final fallback = userMessage.length > 35
           ? '${userMessage.substring(0, 35)}...'
           : userMessage;
@@ -186,7 +173,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       RegenerateResponseEvent event, Emitter<ChatState> emit) async {
     if (_messages.isEmpty) return;
 
-    // Remove the last AI message
     if (!_messages.last.isUser) {
       _messages.removeLast();
       if (_currentThreadId != null) {
@@ -198,7 +184,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
     final messagesToSend = List<Message>.unmodifiable(_messages);
 
-    // Add empty AI placeholder for typing indicator
     _messages.add(MessageModel(text: "", isUser: false));
     emit(state.copyWith(List.unmodifiable(_messages), false,
         currentThreadId: _currentThreadId));
@@ -217,8 +202,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       }
 
       if (_currentThreadId != null) {
-        await _firestoreService.addMessage(
-            _currentThreadId!, _messages.last);
+        await _firestoreService.addMessage(_currentThreadId!, _messages.last);
       }
     } catch (e) {
       _messages.removeLast();
