@@ -240,60 +240,63 @@ class _ChatPageState extends State<ChatPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Top row: logo + theme toggle
-                  Row(
-                    children: [
-                      IconButton(
-                        onPressed: () => Navigator.pop(context),
-                        icon: Icon(Icons.all_inclusive_rounded),
-                      ),
-                      const Spacer(),
-                      BlocBuilder<ThemeCubit, ThemeMode>(
-                        builder: (context, mode) {
-                          final isDarkMode = mode == ThemeMode.dark;
-                          return GestureDetector(
-                            onTap: () =>
-                                context.read<ThemeCubit>().toggleTheme(),
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeInOut,
-                              width: 48,
-                              height: 26,
-                              padding: const EdgeInsets.all(2),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(14),
-                                color: isDarkMode
-                                    ? Colors.white.withAlpha(25)
-                                    : Colors.black.withAlpha(25),
-                              ),
-                              child: AnimatedAlign(
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Row(
+                      children: [
+                        IconButton(
+                          onPressed: () => Navigator.pop(context),
+                          icon: Icon(Icons.all_inclusive_rounded),
+                        ),
+                        const Spacer(),
+                        BlocBuilder<ThemeCubit, ThemeMode>(
+                          builder: (context, mode) {
+                            final isDarkMode = mode == ThemeMode.dark;
+                            return GestureDetector(
+                              onTap: () =>
+                                  context.read<ThemeCubit>().toggleTheme(),
+                              child: AnimatedContainer(
                                 duration: const Duration(milliseconds: 300),
                                 curve: Curves.easeInOut,
-                                alignment: isDarkMode
-                                    ? Alignment.centerLeft
-                                    : Alignment.centerRight,
-                                child: Container(
-                                  width: 22,
-                                  height: 22,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: isDarkMode
-                                        ? const Color(0xFF5137E6)
-                                        : const Color(0xFFFFB300),
-                                  ),
-                                  child: Icon(
-                                    isDarkMode
-                                        ? Icons.dark_mode_rounded
-                                        : Icons.light_mode_rounded,
-                                    size: 13,
-                                    color: Colors.white,
+                                width: 48,
+                                height: 26,
+                                padding: const EdgeInsets.all(2),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(14),
+                                  color: isDarkMode
+                                      ? Colors.white.withAlpha(25)
+                                      : Colors.black.withAlpha(25),
+                                ),
+                                child: AnimatedAlign(
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.easeInOut,
+                                  alignment: isDarkMode
+                                      ? Alignment.centerLeft
+                                      : Alignment.centerRight,
+                                  child: Container(
+                                    width: 22,
+                                    height: 22,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: isDarkMode
+                                          ? const Color(0xFF5137E6)
+                                          : const Color(0xFFFFB300),
+                                    ),
+                                    child: Icon(
+                                      isDarkMode
+                                          ? Icons.dark_mode_rounded
+                                          : Icons.light_mode_rounded,
+                                      size: 13,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
+                            );
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 4),
                   // Prompta title

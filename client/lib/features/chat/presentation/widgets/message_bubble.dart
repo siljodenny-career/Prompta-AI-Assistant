@@ -74,8 +74,10 @@ class MessageBubble extends StatelessWidget {
                               md.ExtensionSet.gitHubFlavored.blockSyntaxes,
                               [
                                 md.EmojiSyntax(),
-                                ...md.ExtensionSet
-                                    .gitHubFlavored.inlineSyntaxes,
+                                ...md
+                                    .ExtensionSet
+                                    .gitHubFlavored
+                                    .inlineSyntaxes,
                               ],
                             ),
                             styleSheet: MarkdownStyleSheet(
@@ -193,86 +195,6 @@ class MessageBubble extends StatelessWidget {
   }
 }
 
-/// Typing indicator with three bouncing dots
-class _TypingIndicator extends StatefulWidget {
-  @override
-  State<_TypingIndicator> createState() => _TypingIndicatorState();
-}
-
-class _TypingIndicatorState extends State<_TypingIndicator>
-    with TickerProviderStateMixin {
-  late List<AnimationController> _controllers;
-  late List<Animation<double>> _animations;
-
-  @override
-  void initState() {
-    super.initState();
-    _controllers = List.generate(
-      3,
-      (i) => AnimationController(
-        vsync: this,
-        duration: const Duration(milliseconds: 400),
-      ),
-    );
-
-    _animations = _controllers.map((ctrl) {
-      return Tween<double>(begin: 0, end: -6).animate(
-        CurvedAnimation(parent: ctrl, curve: Curves.easeInOut),
-      );
-    }).toList();
-
-    _startAnimation();
-  }
-
-  void _startAnimation() async {
-    while (mounted) {
-      for (int i = 0; i < 3; i++) {
-        if (!mounted) return;
-        _controllers[i].forward();
-        await Future.delayed(const Duration(milliseconds: 120));
-      }
-      await Future.delayed(const Duration(milliseconds: 100));
-      for (int i = 0; i < 3; i++) {
-        if (!mounted) return;
-        _controllers[i].reverse();
-      }
-      await Future.delayed(const Duration(milliseconds: 300));
-    }
-  }
-
-  @override
-  void dispose() {
-    for (final c in _controllers) {
-      c.dispose();
-    }
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: List.generate(3, (i) {
-        return AnimatedBuilder(
-          animation: _animations[i],
-          builder: (_, __) => Transform.translate(
-            offset: Offset(0, _animations[i].value),
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 3),
-              width: 8,
-              height: 8,
-              decoration: BoxDecoration(
-                color: Colors.white38,
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-        );
-      }),
-    );
-  }
-}
-
 /// Custom code block builder with copy button and syntax highlighting
 class _CodeBlockBuilder extends MarkdownElementBuilder {
   @override
@@ -347,8 +269,7 @@ class _CodeBlockBuilder extends MarkdownElementBuilder {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.copy_rounded,
-                          size: 14, color: Colors.white38),
+                      Icon(Icons.copy_rounded, size: 14, color: Colors.white38),
                       const SizedBox(width: 4),
                       Text(
                         'Copy',
@@ -416,10 +337,12 @@ class _CodeBlockBuilder extends MarkdownElementBuilder {
           final cls = node.className as String;
           color = _tokenColors[cls] ?? _tokenColors[cls.split('-').last];
         }
-        spans.add(TextSpan(
-          text: node.value,
-          style: color != null ? TextStyle(color: color) : null,
-        ));
+        spans.add(
+          TextSpan(
+            text: node.value,
+            style: color != null ? TextStyle(color: color) : null,
+          ),
+        );
       } else if (node.children != null) {
         Color? color;
         if (node.className != null) {
@@ -428,10 +351,12 @@ class _CodeBlockBuilder extends MarkdownElementBuilder {
         }
         final childSpans = _convertNodes(node.children);
         if (color != null) {
-          spans.add(TextSpan(
-            style: TextStyle(color: color),
-            children: childSpans,
-          ));
+          spans.add(
+            TextSpan(
+              style: TextStyle(color: color),
+              children: childSpans,
+            ),
+          );
         } else {
           spans.addAll(childSpans);
         }
