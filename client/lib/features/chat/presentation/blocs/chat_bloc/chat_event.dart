@@ -31,3 +31,8 @@ class _ThreadsUpdatedEvent extends ChatEvent {
   final List<ChatThread> threads;
   _ThreadsUpdatedEvent(this.threads);
 }
+
+class _MessagesLoadedEvent extends ChatEvent {
+  final List<Message> messages;
+  _MessagesLoadedEvent(this.messages);
+}

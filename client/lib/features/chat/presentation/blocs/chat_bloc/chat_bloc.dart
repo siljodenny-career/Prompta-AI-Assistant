@@ -28,10 +28,19 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<DeleteThreadEvent>(_onDeleteThread);
     on<SetUserIdEvent>(_onSetUserId);
     on<_ThreadsUpdatedEvent>(_onThreadsUpdated);
+    on<_MessagesLoadedEvent>(_onMessagesLoaded);
   }
 
   void _onSetUserId(SetUserIdEvent event, Emitter<ChatState> emit) {
     if (_userId == event.userId && _threadsSub != null) return;
+    
+    // Clear all state when switching users to prevent showing previous user's data
+    if (_userId != null && _userId != event.userId) {
+      _messages.clear();
+      _currentThreadId = null;
+      emit(ChatState()); // Emit empty state while loading
+    }
+    
     _userId = event.userId;
     _threadsSub?.cancel();
     _threadsSub = _firestoreService.getThreads(_userId!).listen(
@@ -45,7 +54,32 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   }
 
   void _onThreadsUpdated(_ThreadsUpdatedEvent event, Emitter<ChatState> emit) {
-    emit(state.copyWith(state.messages, state.isLoading, threads: event.threads));
+    final hasThreads = event.threads.isNotEmpty;
+    final noThreadLoaded = _currentThreadId == null;
+    
+    // Auto-load latest thread on initial load when no thread is selected
+    if (hasThreads && noThreadLoaded && _messages.isEmpty) {
+      final latestThread = event.threads.first;
+      _currentThreadId = latestThread.id;
+      // Emit threads first, then load messages asynchronously
+      emit(state.copyWith(state.messages, true, 
+          threads: event.threads, currentThreadId: _currentThreadId));
+      
+      // Load messages asynchronously
+      _firestoreService.getMessages(latestThread.id).then((messages) {
+        _messages.addAll(messages);
+        if (!isClosed) {
+          add(_MessagesLoadedEvent(List.unmodifiable(_messages)));
+        }
+      });
+    } else {
+      emit(state.copyWith(state.messages, state.isLoading, threads: event.threads));
+    }
+  }
+
+  void _onMessagesLoaded(_MessagesLoadedEvent event, Emitter<ChatState> emit) {
+    emit(state.copyWith(event.messages, false,
+        currentThreadId: _currentThreadId, threads: state.threads));
   }
 
   Future<void> _onNewChat(NewChatEvent event, Emitter<ChatState> emit) async {
