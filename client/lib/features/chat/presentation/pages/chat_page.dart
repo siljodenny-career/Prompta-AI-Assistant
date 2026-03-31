@@ -64,105 +64,102 @@ class _ChatPageState extends State<ChatPage> {
                       child: Column(
                         children: [
                           Expanded(
-                            child: state.messages.isNotEmpty
-                                ? ListView.builder(
-                                    controller: _scrollController,
-                                    itemCount: state.messages.length,
-                                    itemBuilder: (context, index) {
-                                      final isLast =
-                                          index == state.messages.length - 1;
-                                      return MessageBubble(
-                                        message: state.messages[index],
-                                        isLast: isLast,
-                                        onRegenerate:
-                                            isLast &&
-                                                !state.messages[index].isUser &&
-                                                !state.isLoading
-                                            ? () {
-                                                context.read<ChatBloc>().add(
-                                                  RegenerateResponseEvent(),
-                                                );
-                                              }
-                                            : null,
-                                      );
-                                    },
-                                  )
-                                : Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Opacity(
-                                        opacity: 0.3,
-                                        child: Lottie.asset(
-                                          "assets/animations/infinity_loading.json",
-                                          width: ScreenConfig.screenWidth * 0.2,
-                                          repeat: true,
-                                          animate: true,
-                                          filterQuality: FilterQuality.high,
-                                        ),
-                                      ),
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                            child: Stack(
+                              children: [
+                                // Chat content (messages or empty state)
+                                state.messages.isNotEmpty
+                                    ? ListView.builder(
+                                        controller: _scrollController,
+                                        itemCount: state.messages.length,
+                                        itemBuilder: (context, index) {
+                                          final isLast =
+                                              index == state.messages.length - 1;
+                                          return MessageBubble(
+                                            message: state.messages[index],
+                                            isLast: isLast,
+                                            onRegenerate:
+                                                isLast &&
+                                                    !state.messages[index].isUser &&
+                                                    !state.isLoading
+                                                ? () {
+                                                    context.read<ChatBloc>().add(
+                                                      RegenerateResponseEvent(),
+                                                    );
+                                                  }
+                                                : null,
+                                          );
+                                        },
+                                      )
+                                    : Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
-                                          Text(
-                                            "Start with your first prompt",
-                                            style: GoogleFonts.raleway(
-                                              color: isDark
-                                                  ? Colors.white70
-                                                  : Colors.black87,
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w600,
+                                          Opacity(
+                                            opacity: 0.3,
+                                            child: Lottie.asset(
+                                              "assets/animations/infinity_loading.json",
+                                              width: ScreenConfig.screenWidth * 0.2,
+                                              repeat: true,
+                                              animate: true,
+                                              filterQuality: FilterQuality.high,
                                             ),
                                           ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            "Ask anything, generate ideas, or explore with AI",
-                                            style: GoogleFonts.raleway(
-                                              color: isDark
-                                                  ? Colors.white38
-                                                  : Colors.black54,
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.w500,
-                                            ),
+                                          Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                "Start with your first prompt",
+                                                style: GoogleFonts.raleway(
+                                                  color: isDark
+                                                      ? Colors.white70
+                                                      : Colors.black87,
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 4),
+                                              Text(
+                                                "Ask anything, generate ideas, or explore with AI",
+                                                style: GoogleFonts.raleway(
+                                                  color: isDark
+                                                      ? Colors.white38
+                                                      : Colors.black54,
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ],
                                       ),
-                                    ],
+                                // Floating New Chat button overlay
+                                if (!state.userHasInteracted)
+                                  Positioned(
+                                    bottom: 8,
+                                    right: 0,
+                                    child: FloatingActionButton.extended(
+                                      onPressed: () {
+                                        context.read<ChatBloc>().add(NewChatEvent());
+                                        Future.delayed(const Duration(milliseconds: 100), () {
+                                          _inputFieldKey.currentState?.requestFocus();
+                                        });
+                                      },
+                                      icon: const Icon(Icons.auto_awesome),
+                                      label: Text(
+                                        'New Chat',
+                                        style: GoogleFonts.raleway(fontWeight: FontWeight.w600),
+                                      ),
+                                      backgroundColor: const Color(0xFF5137E6),
+                                      foregroundColor: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                    ),
                                   ),
+                              ],
+                            ),
                           ),
                           SizedBox(height: 12),
-                          // New Chat button above input field, only show when user hasn't interacted
-                          BlocBuilder<ChatBloc, ChatState>(
-                            builder: (context, state) {
-                              if (state.userHasInteracted) {
-                                return const SizedBox.shrink();
-                              }
-                              return Align(
-                                alignment: Alignment.centerRight,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(bottom: 8),
-                                  child: FloatingActionButton.extended(
-                                    onPressed: () {
-                                      context.read<ChatBloc>().add(NewChatEvent());
-                                      Future.delayed(const Duration(milliseconds: 100), () {
-                                        _inputFieldKey.currentState?.requestFocus();
-                                      });
-                                    },
-                                    icon: const Icon(Icons.auto_awesome),
-                                    label: Text(
-                                      'New Chat',
-                                      style: GoogleFonts.raleway(fontWeight: FontWeight.w600),
-                                    ),
-                                    backgroundColor: const Color(0xFF5137E6),
-                                    foregroundColor: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(30),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
                           PromptInputField(key: _inputFieldKey),
                         ],
                       ),
