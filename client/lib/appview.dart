@@ -188,20 +188,20 @@ class _LoadingTransitionState extends State<_LoadingTransition> {
 
   Future<void> _checkOnboarding() async {
     final prefs = await SharedPreferences.getInstance();
-    final key = 'onboarding_done_${widget.userId}';
-    final hasSeenOnboarding = prefs.getBool(key) ?? false;
+    final isNewSignUp = prefs.getBool('is_new_signup') ?? false;
+
+    // Clear the flag immediately so it doesn't persist
+    if (isNewSignUp) {
+      await prefs.remove('is_new_signup');
+    }
 
     // Small delay for loading animation
     await Future.delayed(const Duration(milliseconds: 1800));
 
     if (mounted) {
-      if (!hasSeenOnboarding) {
-        // Mark as done for next time
-        await prefs.setBool(key, true);
-      }
       setState(() {
         _showLoading = false;
-        _showOnboarding = !hasSeenOnboarding;
+        _showOnboarding = isNewSignUp;
       });
     }
   }
