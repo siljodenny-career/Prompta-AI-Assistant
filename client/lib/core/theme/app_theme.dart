@@ -15,17 +15,29 @@ class AppTheme {
   );
 
   static final ThemeData lightTheme = ThemeData(
-    scaffoldBackgroundColor: const Color(0xFFF5F5F5),
+    scaffoldBackgroundColor: AppColors.lightScaffoldBg,
     brightness: Brightness.light,
     textTheme: GoogleFonts.ralewayTextTheme(
       ThemeData.light().textTheme,
+    ).apply(
+      bodyColor: AppColors.lightTextPrimary,
+      displayColor: AppColors.lightTextPrimary,
     ),
     drawerTheme: const DrawerThemeData(
-      backgroundColor: Color(0xFFF5F5F5),
+      backgroundColor: AppColors.lightSurface,
+      elevation: 0,
     ),
     appBarTheme: const AppBarTheme(
-      backgroundColor: Color(0xFFF5F5F5),
-      foregroundColor: Colors.black87,
+      backgroundColor: AppColors.lightScaffoldBg,
+      foregroundColor: AppColors.lightTextPrimary,
+      elevation: 0,
+      scrolledUnderElevation: 0,
+    ),
+    dividerTheme: const DividerThemeData(
+      color: AppColors.lightDivider,
+    ),
+    listTileTheme: const ListTileThemeData(
+      iconColor: AppColors.lightTextSecondary,
     ),
   );
 }

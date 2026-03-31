@@ -1,4 +1,5 @@
 import 'package:client/core/components/screen_config.dart';
+import 'package:client/core/theme/app_colors.dart';
 import 'package:client/core/theme/theme_cubit.dart';
 import 'package:client/features/auth/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:client/features/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
@@ -112,7 +113,7 @@ class _ChatPageState extends State<ChatPage> {
                                                 style: GoogleFonts.raleway(
                                                   color: isDark
                                                       ? Colors.white70
-                                                      : Colors.black87,
+                                                      : AppColors.lightTextPrimary,
                                                   fontSize: 20,
                                                   fontWeight: FontWeight.w600,
                                                 ),
@@ -123,7 +124,7 @@ class _ChatPageState extends State<ChatPage> {
                                                 style: GoogleFonts.raleway(
                                                   color: isDark
                                                       ? Colors.white38
-                                                      : Colors.black54,
+                                                      : AppColors.lightTextSecondary,
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.w500,
                                                 ),
@@ -342,7 +343,7 @@ class _ChatPageState extends State<ChatPage> {
                         Text(
                           "AI powered assistant",
                           style: GoogleFonts.raleway(
-                            color: isDark ? Colors.white38 : Colors.black38,
+                            color: isDark ? Colors.white38 : AppColors.lightTextTertiary,
                             fontSize: 13,
                           ),
                         ),
@@ -373,7 +374,7 @@ class _ChatPageState extends State<ChatPage> {
                   filled: true,
                   fillColor: isDark
                       ? Colors.white12
-                      : Colors.black.withAlpha(13),
+                      : AppColors.lightInputBg,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
                     borderSide: BorderSide.none,
@@ -416,7 +417,7 @@ class _ChatPageState extends State<ChatPage> {
                           ? "No chat history yet"
                           : "No results found",
                       style: GoogleFonts.raleway(
-                        color: isDark ? Colors.white24 : Colors.black26,
+                        color: isDark ? Colors.white24 : AppColors.lightTextTertiary,
                         fontSize: 14,
                       ),
                     ),
@@ -447,7 +448,7 @@ class _ChatPageState extends State<ChatPage> {
                         selected: isActive,
                         selectedTileColor: isDark
                             ? Colors.white.withAlpha(13)
-                            : Colors.black.withAlpha(13),
+                            : AppColors.lightCard,
                         leading: Icon(
                           Icons.chat_bubble_outline_rounded,
                           size: 18,
@@ -468,7 +469,7 @@ class _ChatPageState extends State<ChatPage> {
                           _formatDate(thread.updatedAt),
                           style: GoogleFonts.dmSans(
                             fontSize: 11,
-                            color: isDark ? Colors.white24 : Colors.black26,
+                            color: isDark ? Colors.white24 : AppColors.lightTextTertiary,
                           ),
                         ),
                         onTap: () {
@@ -507,20 +508,21 @@ class _ChatPageState extends State<ChatPage> {
           ),
           const SizedBox(height: 20),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 14),
             child: SizedBox(
+              height: 36,
               width: double.infinity,
               child: OutlinedButton.icon(
                 onPressed: () {
                   context.read<SignInBloc>().add(SignOutRequired());
                 },
-                icon: Icon(Icons.logout_rounded, color: Colors.redAccent.shade100),
+                icon: Icon(Icons.logout_rounded, color: Colors.red[400]),
                 label: Text(
                   'Logout',
-                  style: GoogleFonts.raleway(color: Colors.redAccent.shade100),
+                  style: GoogleFonts.raleway(color: Colors.red[400],fontWeight: FontWeight.w700,fontSize: 16),
                 ),
                 style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: Colors.redAccent.shade100, width: 1),
+                  side: BorderSide(color: Colors.red.shade400, width: 1.5),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -559,7 +561,7 @@ class _ChatPageState extends State<ChatPage> {
               name,
               style: GoogleFonts.raleway(
                 fontSize: 14,
-                color: isDark ? Colors.white54 : Colors.black54,
+                color: isDark ? Colors.white54 : AppColors.lightTextSecondary,
               ),
               overflow: TextOverflow.ellipsis,
             ),

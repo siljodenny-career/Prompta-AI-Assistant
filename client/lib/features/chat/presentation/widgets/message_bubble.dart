@@ -1,3 +1,4 @@
+import 'package:client/core/theme/app_colors.dart';
 import 'package:client/features/chat/domain/entities/message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -22,6 +23,14 @@ class MessageBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isUser = message.isUser;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // Light mode colors - grey/black shades as requested
+    final userBubbleColor = isDark ? const Color(0xFF2A2A2A) : const Color(0xFF4A4A4A);
+    final aiBubbleColor = isDark ? const Color(0xFF1A1A1A) : const Color(0xFFE8E8ED);
+    final userTextColor = Colors.white;
+    final aiTextColor = isDark ? Colors.white : AppColors.lightTextPrimary;
+    final aiTextSecondary = isDark ? Colors.white70 : AppColors.lightTextSecondary;
 
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
@@ -47,13 +56,22 @@ class MessageBubble extends StatelessWidget {
             maxWidth: MediaQuery.of(context).size.width * 0.85,
           ),
           decoration: BoxDecoration(
-            color: isUser ? const Color(0xFF2A2A2A) : const Color(0xFF1A1A1A),
+            color: isUser ? userBubbleColor : aiBubbleColor,
             borderRadius: BorderRadius.only(
               topLeft: const Radius.circular(16),
               topRight: const Radius.circular(16),
               bottomLeft: Radius.circular(isUser ? 16 : 0),
               bottomRight: Radius.circular(isUser ? 0 : 16),
             ),
+            boxShadow: isDark
+                ? null
+                : [
+                    BoxShadow(
+                      color: Colors.black.withAlpha(6),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
           ),
           child: message.text.isNotEmpty
               ? Column(
@@ -63,7 +81,7 @@ class MessageBubble extends StatelessWidget {
                         ? Text(
                             message.text,
                             style: GoogleFonts.raleway(
-                              color: Colors.white,
+                              color: userTextColor,
                               fontSize: 16,
                             ),
                           )
@@ -82,45 +100,45 @@ class MessageBubble extends StatelessWidget {
                             ),
                             styleSheet: MarkdownStyleSheet(
                               p: GoogleFonts.dmSans(
-                                color: Colors.white,
+                                color: aiTextColor,
                                 fontSize: 15,
                                 height: 1.5,
                               ),
                               h1: GoogleFonts.raleway(
-                                color: Colors.white,
+                                color: aiTextColor,
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
                               ),
                               h2: GoogleFonts.raleway(
-                                color: Colors.white,
+                                color: aiTextColor,
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
                               ),
                               h3: GoogleFonts.raleway(
-                                color: Colors.white,
+                                color: aiTextColor,
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
                               ),
                               strong: GoogleFonts.dmSans(
-                                color: Colors.white,
+                                color: aiTextColor,
                                 fontWeight: FontWeight.bold,
                               ),
                               em: GoogleFonts.dmSans(
-                                color: Colors.white70,
+                                color: aiTextSecondary,
                                 fontStyle: FontStyle.italic,
                               ),
                               code: GoogleFonts.firaCode(
                                 color: const Color(0xFFE06C75),
-                                backgroundColor: Colors.white10,
+                                backgroundColor: isDark ? Colors.white10 : Colors.black.withAlpha(13),
                                 fontSize: 13,
                               ),
                               codeblockDecoration: BoxDecoration(
-                                color: const Color(0xFF1E1E1E),
+                                color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFF2D2D2D),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               codeblockPadding: const EdgeInsets.all(12),
                               listBullet: GoogleFonts.dmSans(
-                                color: Colors.white70,
+                                color: aiTextSecondary,
                                 fontSize: 15,
                               ),
                               blockquoteDecoration: BoxDecoration(
@@ -137,15 +155,15 @@ class MessageBubble extends StatelessWidget {
                                 bottom: 4,
                               ),
                               tableBorder: TableBorder.all(
-                                color: Colors.white24,
+                                color: isDark ? Colors.white24 : Colors.black12,
                                 width: 1,
                               ),
                               tableHead: GoogleFonts.dmSans(
-                                color: Colors.white,
+                                color: aiTextColor,
                                 fontWeight: FontWeight.bold,
                               ),
                               tableBody: GoogleFonts.dmSans(
-                                color: Colors.white70,
+                                color: aiTextSecondary,
                               ),
                             ),
                             builders: {
@@ -163,13 +181,13 @@ class MessageBubble extends StatelessWidget {
                               Icon(
                                 Icons.refresh_rounded,
                                 size: 16,
-                                color: Colors.white38,
+                                color: aiTextSecondary,
                               ),
                               const SizedBox(width: 4),
                               Text(
                                 'Regenerate',
                                 style: GoogleFonts.raleway(
-                                  color: Colors.white38,
+                                  color: aiTextSecondary,
                                   fontSize: 12,
                                 ),
                               ),
@@ -223,11 +241,13 @@ class _CodeBlockBuilder extends MarkdownElementBuilder {
       spans = [TextSpan(text: code)];
     }
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E1E1E),
+        color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFF2D2D2D),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -236,7 +256,7 @@ class _CodeBlockBuilder extends MarkdownElementBuilder {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: Colors.white.withAlpha(13),
+              color: isDark ? Colors.white.withAlpha(13) : Colors.black.withAlpha(13),
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(8),
               ),
@@ -247,7 +267,7 @@ class _CodeBlockBuilder extends MarkdownElementBuilder {
                 Text(
                   language ?? 'code',
                   style: GoogleFonts.firaCode(
-                    color: Colors.white38,
+                    color: isDark ? Colors.white38 : Colors.white54,
                     fontSize: 12,
                   ),
                 ),
@@ -269,12 +289,12 @@ class _CodeBlockBuilder extends MarkdownElementBuilder {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.copy_rounded, size: 14, color: Colors.white38),
+                      Icon(Icons.copy_rounded, size: 14, color: isDark ? Colors.white38 : Colors.white54),
                       const SizedBox(width: 4),
                       Text(
                         'Copy',
                         style: GoogleFonts.dmSans(
-                          color: Colors.white38,
+                          color: isDark ? Colors.white38 : Colors.white54,
                           fontSize: 12,
                         ),
                       ),

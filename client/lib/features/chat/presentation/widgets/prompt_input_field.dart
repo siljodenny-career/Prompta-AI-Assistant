@@ -1,3 +1,4 @@
+import 'package:client/core/theme/app_colors.dart';
 import 'package:client/features/chat/presentation/blocs/chat_bloc/chat_bloc.dart';
 import 'package:client/features/chat/presentation/widgets/animated_texthint.dart';
 import 'package:flutter/material.dart';
@@ -78,11 +79,21 @@ class PromptInputFieldState extends State<PromptInputField> {
       margin: EdgeInsets.fromLTRB(10, 10, 10, 20),
       padding: const EdgeInsets.fromLTRB(25, 0, 6, 0),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1A1A1A) : const Color(0xFFEAEAEA),
+        color: isDark ? const Color(0xFF1A1A1A) : AppColors.lightSurface,
         borderRadius: BorderRadius.circular(40),
-        border: isDark
+        border: Border.all(
+          color: isDark ? Colors.transparent : AppColors.lightBorder,
+          width: 1,
+        ),
+        boxShadow: isDark
             ? null
-            : Border.all(color: Colors.black.withAlpha(30), width: 1),
+            : [
+                BoxShadow(
+                  color: Colors.black.withAlpha(8),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
       ),
       child: Row(
         children: [
@@ -103,7 +114,7 @@ class PromptInputFieldState extends State<PromptInputField> {
                   child: TextField(
                     focusNode: _focusNode,
                     style: GoogleFonts.raleway(
-                      color: isDark ? Colors.white60 : Colors.black87,
+                      color: isDark ? Colors.white60 : AppColors.lightTextPrimary,
                     ),
                     textCapitalization: TextCapitalization.sentences,
                     controller: _controller,
@@ -112,7 +123,7 @@ class PromptInputFieldState extends State<PromptInputField> {
                     minLines: 1,
                     maxLines: 5,
                     autocorrect: true,
-                    cursorColor: Colors.blue,
+                    cursorColor: AppColors.primaryPurple,
                     cursorHeight: 20,
                     decoration: const InputDecoration(
                       hintText: "",
@@ -132,14 +143,14 @@ class PromptInputFieldState extends State<PromptInputField> {
                 ? Container(
                     width: 36,
                     decoration: BoxDecoration(
-                      color: Colors.white12,
+                      color: isDark ? Colors.white12 : AppColors.lightInputBg,
                       shape: BoxShape.circle,
                     ),
                     child: IconButton(
                       key: const ValueKey("send"),
                       icon: const Icon(
                         Icons.arrow_upward_rounded,
-                        color: Colors.blue,
+                        color: AppColors.primaryPurple,
                         size: 18,
                       ),
                       onPressed: _sendMessage,
