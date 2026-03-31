@@ -6,17 +6,27 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class PromptInputField extends StatefulWidget {
-  const PromptInputField({super.key});
+  final GlobalKey<PromptInputFieldState>? fieldKey;
+  
+  const PromptInputField({super.key, this.fieldKey});
 
   @override
-  State<PromptInputField> createState() => _PromptInputFieldState();
+  State<PromptInputField> createState() => PromptInputFieldState();
+
+  static PromptInputFieldState? of(BuildContext context) {
+    return context.findAncestorStateOfType<PromptInputFieldState>();
+  }
 }
 
-class _PromptInputFieldState extends State<PromptInputField> {
+class PromptInputFieldState extends State<PromptInputField> {
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   bool _hasText = false;
   bool _wasLoading = false;
+
+  void requestFocus() {
+    _focusNode.requestFocus();
+  }
 
   void _sendMessage() {
     if (_controller.text.isNotEmpty) {

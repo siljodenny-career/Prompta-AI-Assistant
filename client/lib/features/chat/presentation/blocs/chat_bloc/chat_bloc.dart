@@ -125,7 +125,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     final userMsg = MessageModel(text: event.text, isUser: true);
     _messages.add(userMsg);
     emit(state.copyWith(List.unmodifiable(_messages), true,
-        currentThreadId: _currentThreadId));
+        currentThreadId: _currentThreadId, userHasInteracted: true));
 
     // Save user message to Firestore
     if (_currentThreadId != null) {

@@ -24,6 +24,7 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
+  final GlobalKey<PromptInputFieldState> _inputFieldKey = GlobalKey<PromptInputFieldState>();
   String _searchQuery = '';
 
   @override
@@ -130,7 +131,39 @@ class _ChatPageState extends State<ChatPage> {
                                   ),
                           ),
                           SizedBox(height: 12),
-                          PromptInputField(),
+                          // New Chat button above input field, only show when user hasn't interacted
+                          BlocBuilder<ChatBloc, ChatState>(
+                            builder: (context, state) {
+                              if (state.userHasInteracted) {
+                                return const SizedBox.shrink();
+                              }
+                              return Align(
+                                alignment: Alignment.centerRight,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(bottom: 8),
+                                  child: FloatingActionButton.extended(
+                                    onPressed: () {
+                                      context.read<ChatBloc>().add(NewChatEvent());
+                                      Future.delayed(const Duration(milliseconds: 100), () {
+                                        _inputFieldKey.currentState?.requestFocus();
+                                      });
+                                    },
+                                    icon: const Icon(Icons.auto_awesome),
+                                    label: Text(
+                                      'New Chat',
+                                      style: GoogleFonts.raleway(fontWeight: FontWeight.w600),
+                                    ),
+                                    backgroundColor: const Color(0xFF5137E6),
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                          PromptInputField(key: _inputFieldKey),
                         ],
                       ),
                     ),
@@ -361,6 +394,10 @@ class _ChatPageState extends State<ChatPage> {
             onTap: () {
               Navigator.pop(context);
               context.read<ChatBloc>().add(NewChatEvent());
+              // Focus the textfield after a short delay to allow drawer to close
+              Future.delayed(const Duration(milliseconds: 100), () {
+                _inputFieldKey.currentState?.requestFocus();
+              });
             },
           ),
           Divider(height: 1),
