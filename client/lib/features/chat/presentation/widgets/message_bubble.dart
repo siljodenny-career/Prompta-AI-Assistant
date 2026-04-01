@@ -99,7 +99,7 @@ class MessageBubble extends StatelessWidget {
                               ],
                             ),
                             styleSheet: MarkdownStyleSheet(
-                              p: GoogleFonts.dmSans(
+                              p: GoogleFonts.raleway(
                                 color: aiTextColor,
                                 fontSize: 15,
                                 height: 1.5,
@@ -119,11 +119,11 @@ class MessageBubble extends StatelessWidget {
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
                               ),
-                              strong: GoogleFonts.dmSans(
+                              strong: GoogleFonts.raleway(
                                 color: aiTextColor,
                                 fontWeight: FontWeight.bold,
                               ),
-                              em: GoogleFonts.dmSans(
+                              em: GoogleFonts.raleway(
                                 color: aiTextSecondary,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -137,7 +137,7 @@ class MessageBubble extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               codeblockPadding: const EdgeInsets.all(12),
-                              listBullet: GoogleFonts.dmSans(
+                              listBullet: GoogleFonts.raleway(
                                 color: aiTextSecondary,
                                 fontSize: 15,
                               ),
@@ -158,11 +158,11 @@ class MessageBubble extends StatelessWidget {
                                 color: isDark ? Colors.white24 : Colors.black12,
                                 width: 1,
                               ),
-                              tableHead: GoogleFonts.dmSans(
+                              tableHead: GoogleFonts.raleway(
                                 color: aiTextColor,
                                 fontWeight: FontWeight.bold,
                               ),
-                              tableBody: GoogleFonts.dmSans(
+                              tableBody: GoogleFonts.raleway(
                                 color: aiTextSecondary,
                               ),
                             ),
@@ -293,7 +293,7 @@ class _CodeBlockBuilder extends MarkdownElementBuilder {
                       const SizedBox(width: 4),
                       Text(
                         'Copy',
-                        style: GoogleFonts.dmSans(
+                        style: GoogleFonts.raleway(
                           color: isDark ? Colors.white38 : Colors.white54,
                           fontSize: 12,
                         ),
