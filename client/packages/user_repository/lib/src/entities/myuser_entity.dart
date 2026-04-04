@@ -4,11 +4,13 @@ class MyuserEntity extends Equatable {
   final String userId;
   final String name;
   final String email;
+  final String? profileImageUrl;
 
   const MyuserEntity({
     required this.userId,
     required this.name,
     required this.email,
+    this.profileImageUrl,
   });
 
   Map<String, Object?> toDocument() {
@@ -16,6 +18,7 @@ class MyuserEntity extends Equatable {
       'userId': userId,
       'name': name,
       'email': email,
+      if (profileImageUrl != null) 'profileImageUrl': profileImageUrl,
     };
   }
 
@@ -24,9 +27,10 @@ class MyuserEntity extends Equatable {
       userId: doc['userId'],
       name: doc['name'],
       email: doc['email'],
+      profileImageUrl: doc['profileImageUrl'],
     );
   }
 
   @override
-  List<Object?> get props => [userId, name, email];
+  List<Object?> get props => [userId, name, email, profileImageUrl];
 }

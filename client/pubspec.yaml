@@ -54,6 +54,9 @@ dependencies:
   flutter_highlight: ^0.7.0
   highlight: ^0.7.0
   shared_preferences: ^2.5.5
+  image_picker: ^1.1.2
+  image_cropper: ^9.0.0
+  firebase_storage: ^13.0.0
 
 dev_dependencies:
   flutter_test:

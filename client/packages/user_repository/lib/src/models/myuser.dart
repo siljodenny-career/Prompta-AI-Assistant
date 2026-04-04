@@ -8,11 +8,13 @@ class MyUser extends Equatable {
   final String userId;
   final String name;
   final String email;
+  final String? profileImageUrl;
 
   const MyUser({
     required this.userId,
     required this.name,
     required this.email,
+    this.profileImageUrl,
   });
 
   static const MyUser empty = MyUser(
@@ -25,11 +27,13 @@ class MyUser extends Equatable {
     String? userId,
     String? name,
     String? email,
+    String? profileImageUrl,
   }) {
     return MyUser(
       userId: userId ?? this.userId,
       name: name ?? this.name,
       email: email ?? this.email,
+      profileImageUrl: profileImageUrl ?? this.profileImageUrl,
     );
   }
 
@@ -38,6 +42,7 @@ class MyUser extends Equatable {
       userId: userId,
       name: name,
       email: email,
+      profileImageUrl: profileImageUrl,
     );
   }
 
@@ -46,9 +51,10 @@ class MyUser extends Equatable {
       userId: entity.userId,
       name: entity.name,
       email: entity.email,
+      profileImageUrl: entity.profileImageUrl,
     );
   }
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [userId, name, email, profileImageUrl];
 }
