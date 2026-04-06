@@ -209,8 +209,8 @@ class _ChatPageState extends State<ChatPage> {
             final user = state.user;
             if (user == null) return const SizedBox.shrink();
             final userRepo = context.read<UserRepository>();
-            return FutureBuilder<MyUser>(
-              future: userRepo.getUserData(user.uid),
+            return StreamBuilder<MyUser>(
+              stream: userRepo.userDataStream(user.uid),
               builder: (context, snapshot) {
                 final name = (snapshot.data != null &&
                         snapshot.data!.name.isNotEmpty)
@@ -494,8 +494,8 @@ class _ChatPageState extends State<ChatPage> {
                 return _userTileCompact('Guest User', 'G', null);
               }
               final userRepo = context.read<UserRepository>();
-              return FutureBuilder<MyUser>(
-                future: userRepo.getUserData(user.uid),
+              return StreamBuilder<MyUser>(
+                stream: userRepo.userDataStream(user.uid),
                 builder: (context, snapshot) {
                   final name = (snapshot.data != null &&
                           snapshot.data!.name.isNotEmpty)

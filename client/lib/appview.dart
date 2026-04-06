@@ -208,34 +208,47 @@ class _LoadingTransitionState extends State<_LoadingTransition> {
 
   @override
   Widget build(BuildContext context) {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 600),
+      transitionBuilder: (child, animation) {
+        return FadeTransition(
+          opacity: animation,
+          child: ScaleTransition(
+            scale: Tween<double>(begin: 0.95, end: 1.0).animate(
+              CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+            ),
+            child: child,
+          ),
+        );
+      },
+      child: _buildContent(),
+    );
+  }
+
+  Widget _buildContent() {
     if (_showLoading || _showOnboarding == null) {
       return Scaffold(
+        key: const ValueKey('loading'),
         body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Lottie.asset(
-                'assets/animations/infinity_loading.json',
-                width: 100,
-                repeat: true,
-                animate: true,
-                filterQuality: FilterQuality.high,
-              ),
-            ],
+          child: Lottie.asset(
+            'assets/animations/infinity_loading.json',
+            width: 100,
+            repeat: true,
+            animate: true,
+            filterQuality: FilterQuality.high,
           ),
         ),
       );
     }
 
     if (_showOnboarding!) {
-      return const OnboardingPage();
+      return const OnboardingPage(key: ValueKey('onboarding'));
     }
 
-    // Returning user (sign-in) — go straight to chat
     return BlocProvider(
+      key: const ValueKey('chat'),
       create: (context) => SignInBloc(
-        userRepository:
-            context.read<AuthenticationBloc>().userRepository,
+        userRepository: context.read<AuthenticationBloc>().userRepository,
       ),
       child: const ChatPage(),
     );

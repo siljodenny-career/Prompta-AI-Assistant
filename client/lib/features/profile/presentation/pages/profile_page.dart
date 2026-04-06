@@ -90,13 +90,6 @@ class _ProfileView extends StatelessWidget {
                   value: user.email,
                   isDark: isDark,
                 ),
-                const SizedBox(height: 16),
-                // User ID Section (read-only)
-                _ProfileField(
-                  label: 'User ID',
-                  value: user.userId,
-                  isDark: isDark,
-                ),
               ],
             ),
           );

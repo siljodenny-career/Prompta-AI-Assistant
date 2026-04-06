@@ -89,6 +89,16 @@ class FirebaseUserRepo implements UserRepository {
   }
 
   @override
+  Stream<MyUser> userDataStream(String userId) {
+    return usersCollection.doc(userId).snapshots().map((doc) {
+      if (doc.exists) {
+        return MyUser.fromEntity(MyuserEntity.fromDocument(doc.data()!));
+      }
+      return MyUser.empty;
+    });
+  }
+
+  @override
   Future<void> updateUserName(String userId, String newName) async {
     try {
       await usersCollection.doc(userId).update({'name': newName});
