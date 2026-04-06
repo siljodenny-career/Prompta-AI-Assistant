@@ -7,6 +7,7 @@ import 'package:client/features/chat/presentation/blocs/chat_bloc/chat_bloc.dart
 import 'package:client/features/chat/presentation/widgets/chat_background.dart';
 import 'package:client/features/chat/presentation/widgets/message_bubble.dart';
 import 'package:client/features/chat/presentation/widgets/prompt_input_field.dart';
+import 'package:client/features/profile/presentation/pages/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -208,8 +209,8 @@ class _ChatPageState extends State<ChatPage> {
             final user = state.user;
             if (user == null) return const SizedBox.shrink();
             final userRepo = context.read<UserRepository>();
-            return FutureBuilder<MyUser>(
-              future: userRepo.getUserData(user.uid),
+            return StreamBuilder<MyUser>(
+              stream: userRepo.userDataStream(user.uid),
               builder: (context, snapshot) {
                 final name = (snapshot.data != null &&
                         snapshot.data!.name.isNotEmpty)
@@ -490,23 +491,61 @@ class _ChatPageState extends State<ChatPage> {
             builder: (context, state) {
               final user = state.user;
               if (user == null) {
-                return _userTileCompact('Guest User', 'G');
+                return _userTileCompact('Guest User', 'G', null);
               }
               final userRepo = context.read<UserRepository>();
-              return FutureBuilder<MyUser>(
-                future: userRepo.getUserData(user.uid),
+              return StreamBuilder<MyUser>(
+                stream: userRepo.userDataStream(user.uid),
                 builder: (context, snapshot) {
                   final name = (snapshot.data != null &&
                           snapshot.data!.name.isNotEmpty)
                       ? snapshot.data!.name
                       : user.displayName ?? 'Guest User';
                   final initials = _getInitials(name);
-                  return _userTileCompact(name, initials);
+                  final imageUrl = snapshot.data?.profileImageUrl;
+                  return _userTileCompact(name, initials, imageUrl);
                 },
               );
             },
           ),
-          const SizedBox(height: 20),
+          // Profile button
+          BlocBuilder<AuthenticationBloc, AuthenticationState>(
+            builder: (context, state) {
+              final user = state.user;
+              if (user == null) return const SizedBox.shrink();
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: SizedBox(
+                  height: 36,
+                  width: double.infinity,
+                  child: TextButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ProfilePage(userId: user.uid),
+                        ),
+                      );
+                    },
+                    icon: Icon(
+                      Icons.person_outline_rounded,
+                      size: 18,
+                      color: isDark ? Colors.white54 : AppColors.lightTextSecondary,
+                    ),
+                    label: Text(
+                      'Edit Profile',
+                      style: GoogleFonts.raleway(
+                        fontSize: 14,
+                        color: isDark ? Colors.white54 : AppColors.lightTextSecondary,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 8),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 14),
             child: SizedBox(
@@ -537,7 +576,7 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  Widget _userTileCompact(String name, String initials) {
+  Widget _userTileCompact(String name, String initials, String? imageUrl) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -546,14 +585,18 @@ class _ChatPageState extends State<ChatPage> {
           CircleAvatar(
             radius: 16,
             backgroundColor: const Color(0xFF5137E6),
-            child: Text(
-              initials,
-              style: GoogleFonts.raleway(
-                fontSize: 11,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
+            backgroundImage:
+                imageUrl != null ? NetworkImage(imageUrl) : null,
+            child: imageUrl == null
+                ? Text(
+                    initials,
+                    style: GoogleFonts.raleway(
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  )
+                : null,
           ),
           const SizedBox(width: 8),
           Expanded(
@@ -595,12 +638,25 @@ class _AvatarChipState extends State<_AvatarChip> {
     }
   }
 
+  void _openProfile(BuildContext context) {
+    final authState = context.read<AuthenticationBloc>().state;
+    final user = authState.user;
+    if (user == null) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ProfilePage(userId: user.uid),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(right: 12),
       child: GestureDetector(
         onTap: _toggle,
+        onLongPress: () => _openProfile(context),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
