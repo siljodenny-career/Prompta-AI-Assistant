@@ -108,6 +108,7 @@ class _ProfileView extends StatelessWidget {
   void _showEditNameDialog(BuildContext context, MyUser user) {
     final controller = TextEditingController(text: user.name);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final profileBloc = context.read<ProfileBloc>();
 
     showDialog(
       context: context,
@@ -153,7 +154,7 @@ class _ProfileView extends StatelessWidget {
             onPressed: () {
               final newName = controller.text.trim();
               if (newName.isNotEmpty && newName != user.name) {
-                context.read<ProfileBloc>().add(
+                profileBloc.add(
                   UpdateName(userId: user.userId, newName: newName),
                 );
               }
