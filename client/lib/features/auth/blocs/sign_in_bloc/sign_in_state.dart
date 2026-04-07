@@ -13,7 +13,9 @@ final class SignInInitial extends SignInState {}
 final class SignInLoading extends SignInState {}
 
 final class SignInSuccess extends SignInState {
-  User? user;
+  final User? user;
+
+  const SignInSuccess(this.user);
 }
 
 final class SignInFailure extends SignInState {

@@ -20,7 +20,7 @@ class PromptaSnackBar {
             margin: const EdgeInsets.fromLTRB(16, 0, 16, 24),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(14),
-              side: BorderSide(color: color.withOpacity(0.4)),
+              side: BorderSide(color: color.withValues(alpha: 0.4)),
             ),
             content: Row(
               children: [

@@ -15,18 +15,18 @@ class PromptaLogo extends StatelessWidget {
         color: PromptaWelcomeTheme.surface,
         borderRadius: BorderRadius.circular(size * 0.28),
         border: Border.all(
-          color: PromptaWelcomeTheme.accent.withOpacity(0.35),
+          color: PromptaWelcomeTheme.accent.withValues(alpha: 0.35),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: PromptaWelcomeTheme.accent.withOpacity(0.28),
+            color: PromptaWelcomeTheme.accent.withValues(alpha: 0.28),
             blurRadius: 24,
             spreadRadius: -4,
             offset: const Offset(0, 6),
           ),
           BoxShadow(
-            color: PromptaWelcomeTheme.accent.withOpacity(0.10),
+            color: PromptaWelcomeTheme.accent.withValues(alpha: 0.10),
             blurRadius: 48,
             spreadRadius: 0,
           ),

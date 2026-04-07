@@ -65,7 +65,7 @@ class _SubmitButtonState extends State<SubmitButton>
             borderRadius: BorderRadius.circular(14),
             boxShadow: [
               BoxShadow(
-                color: PromptaWelcomeTheme.accent.withOpacity(0.38),
+                color: PromptaWelcomeTheme.accent.withValues(alpha: 0.38),
                 blurRadius: 22,
                 offset: const Offset(0, 8),
               ),

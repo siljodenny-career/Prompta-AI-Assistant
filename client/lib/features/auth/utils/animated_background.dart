@@ -18,7 +18,7 @@ class ParticlePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = PromptaWelcomeTheme.accent.withOpacity(0.07);
+    final paint = Paint()..color = PromptaWelcomeTheme.accent.withValues(alpha: 0.07);
     for (int i = 0; i < _pts.length; i++) {
       final dx =
           _pts[i].dx * size.width + math.sin(t * 2 * math.pi + i * 0.7) * 18;
@@ -33,10 +33,10 @@ class ParticlePainter extends CustomPainter {
       ..shader =
           RadialGradient(
             colors: [
-              PromptaWelcomeTheme.accent.withOpacity(
-                0.12 + math.sin(t * math.pi * 2) * 0.04,
+              PromptaWelcomeTheme.accent.withValues(
+                alpha: 0.12 + math.sin(t * math.pi * 2) * 0.04,
               ),
-              PromptaWelcomeTheme.accent.withOpacity(0),
+              PromptaWelcomeTheme.accent.withValues(alpha: 0),
             ],
           ).createShader(
             Rect.fromCircle(
@@ -55,8 +55,8 @@ class ParticlePainter extends CustomPainter {
       ..shader =
           RadialGradient(
             colors: [
-              PromptaWelcomeTheme.accent.withOpacity(0.07),
-              PromptaWelcomeTheme.accent.withOpacity(0),
+              PromptaWelcomeTheme.accent.withValues(alpha: 0.07),
+              PromptaWelcomeTheme.accent.withValues(alpha: 0),
             ],
           ).createShader(
             Rect.fromCircle(

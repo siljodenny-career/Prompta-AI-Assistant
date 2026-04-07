@@ -38,7 +38,7 @@ class _TermsCheckBoxState extends State<TermsCheckBox> {
               boxShadow: _agreed
                   ? [
                       BoxShadow(
-                        color: PromptaWelcomeTheme.accent.withOpacity(0.3),
+                        color: PromptaWelcomeTheme.accent.withValues(alpha: 0.3),
                         blurRadius: 8,
                       ),
                     ]

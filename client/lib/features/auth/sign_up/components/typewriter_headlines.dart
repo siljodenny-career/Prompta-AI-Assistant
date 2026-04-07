@@ -97,7 +97,7 @@ class _TypewriterHeadlineState extends State<TypewriterHeadline>
         ),
         AnimatedBuilder(
           animation: _cursorCtrl,
-          builder: (_, __) => Opacity(
+          builder: (_, _) => Opacity(
             opacity: _cursorCtrl.value,
             child: Padding(
               padding: const EdgeInsets.only(top: 4),
@@ -109,7 +109,7 @@ class _TypewriterHeadlineState extends State<TypewriterHeadline>
                   borderRadius: BorderRadius.circular(2),
                   boxShadow: [
                     BoxShadow(
-                      color: PromptaWelcomeTheme.accent.withOpacity(0.7),
+                      color: PromptaWelcomeTheme.accent.withValues(alpha: 0.7),
                       blurRadius: 8,
                     ),
                   ],

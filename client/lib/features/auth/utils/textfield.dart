@@ -36,14 +36,14 @@ class _PromptaFieldState extends State<PromptaField> {
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
           color: _focused
-              ? PromptaWelcomeTheme.accent.withOpacity(0.65)
+              ? PromptaWelcomeTheme.accent.withValues(alpha: 0.65)
               : PromptaWelcomeTheme.border,
           width: 1.2,
         ),
         boxShadow: _focused
             ? [
                 BoxShadow(
-                  color: PromptaWelcomeTheme.accent.withOpacity(0.12),
+                  color: PromptaWelcomeTheme.accent.withValues(alpha: 0.12),
                   blurRadius: 18,
                   spreadRadius: -2,
                 ),

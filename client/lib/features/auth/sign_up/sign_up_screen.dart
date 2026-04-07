@@ -155,7 +155,7 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
               Positioned.fill(
                 child: AnimatedBuilder(
                   animation: _bgCtrl,
-                  builder: (_, __) =>
+                  builder: (_, _) =>
                       CustomPaint(painter: ParticlePainter(_bgCtrl.value)),
                 ),
               ),
@@ -177,7 +177,7 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                       Center(
                         child: AnimatedBuilder(
                           animation: _logoCtrl,
-                          builder: (_, __) => FadeTransition(
+                          builder: (_, _) => FadeTransition(
                             opacity: _logoFade,
                             child: ScaleTransition(
                               scale: _logoScale,
@@ -202,7 +202,7 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                                       const SizedBox(width: 6),
                                       AnimatedBuilder(
                                         animation: _logoGlow,
-                                        builder: (_, __) => Container(
+                                        builder: (_, _) => Container(
                                           width: 7,
                                           height: 7,
                                           decoration: BoxDecoration(
@@ -212,8 +212,8 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                                               BoxShadow(
                                                 color: PromptaWelcomeTheme
                                                     .accent
-                                                    .withOpacity(
-                                                      0.8 * _logoGlow.value,
+                                                    .withValues(
+                                                      alpha: 0.8 * _logoGlow.value,
                                                     ),
                                                 blurRadius: 10,
                                               ),
