@@ -1,16 +1,13 @@
 import 'dart:math';
 
-import 'package:client/features/auth/blocs/authentication_bloc/authentication_bloc.dart';
-import 'package:client/features/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
-import 'package:client/features/chat/presentation/pages/chat_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class OnboardingPage extends StatefulWidget {
-  const OnboardingPage({super.key});
+  final VoidCallback? onComplete;
+  const OnboardingPage({super.key, this.onComplete});
 
   @override
   State<OnboardingPage> createState() => _OnboardingPageState();
@@ -21,17 +18,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
   int _currentPage = 0;
 
   void _navigateToChat() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => BlocProvider(
-          create: (context) => SignInBloc(
-            userRepository: context.read<AuthenticationBloc>().userRepository,
-          ),
-          child: const ChatPage(),
-        ),
-      ),
-    );
+    // Call onComplete callback to notify _LoadingTransition to show ChatPage
+    // instead of using pushReplacement, so the navigation stack stays intact
+    if (widget.onComplete != null) {
+      widget.onComplete!();
+    }
   }
 
   @override

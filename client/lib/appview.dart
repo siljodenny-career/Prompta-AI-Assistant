@@ -253,7 +253,10 @@ class _LoadingTransitionState extends State<_LoadingTransition> {
     }
 
     if (_showOnboarding!) {
-      return const OnboardingPage(key: ValueKey('onboarding'));
+      return OnboardingPage(
+        key: const ValueKey('onboarding'),
+        onComplete: () => setState(() => _showOnboarding = false),
+      );
     }
 
     return BlocProvider(
