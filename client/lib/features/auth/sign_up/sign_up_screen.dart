@@ -42,6 +42,9 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
   final _nameCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
+  final _nameFocus = FocusNode();
+  final _emailFocus = FocusNode();
+  final _passFocus = FocusNode();
   String _password = '';
 
   final _formKey = GlobalKey<FormState>();
@@ -126,10 +129,32 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
     _nameCtrl.dispose();
     _emailCtrl.dispose();
     _passCtrl.dispose();
+    _nameFocus.dispose();
+    _emailFocus.dispose();
+    _passFocus.dispose();
     super.dispose();
   }
 
   bool _signUpRequired = false;
+
+  void _submitForm() {
+    if (_formKey.currentState!.validate()) {
+      MyUser myUser = MyUser.empty;
+      myUser = myUser.copywith(
+        name: _nameCtrl.text.trim(),
+        email: _emailCtrl.text.trim(),
+      );
+
+      setState(() {
+        context.read<SignUpBloc>().add(
+          SignUpRequired(
+            myUser,
+            _passCtrl.text,
+          ),
+        );
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -273,7 +298,10 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                                       label: 'Full name',
                                       icon: Icons.person_outline_rounded,
                                       controller: _nameCtrl,
+                                      focusNode: _nameFocus,
                                       keyboardType: TextInputType.name,
+                                      textInputAction: TextInputAction.next,
+                                      onFieldSubmitted: (_) => _emailFocus.requestFocus(),
                                       validator: (v) =>
                                           (v == null || v.trim().isEmpty)
                                           ? 'Name is required'
@@ -289,7 +317,10 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                                       label: 'Email address',
                                       icon: Icons.mail_outline_rounded,
                                       controller: _emailCtrl,
+                                      focusNode: _emailFocus,
                                       keyboardType: TextInputType.emailAddress,
+                                      textInputAction: TextInputAction.next,
+                                      onFieldSubmitted: (_) => _passFocus.requestFocus(),
                                       validator: (v) =>
                                           (v == null || !v.contains('@'))
                                           ? 'Enter a valid email'
@@ -309,7 +340,10 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                                           label: 'Create password',
                                           icon: Icons.lock_outline_rounded,
                                           controller: _passCtrl,
+                                          focusNode: _passFocus,
                                           obscure: true,
+                                          textInputAction: TextInputAction.done,
+                                          onFieldSubmitted: (_) => _submitForm(),
                                           validator: (v) {
                                           if (v == null || v.length < 6) return 'Min 6 characters';
                                           if (!RegExp(r'[A-Z]').hasMatch(v)) return 'Need at least one uppercase letter';
@@ -341,27 +375,7 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                                           child: SubmitButton(
                                             text: 'Create Account',
                                             icon: Icons.arrow_forward,
-                                            onPressed: () {
-                                              if (_formKey.currentState!
-                                                  .validate()) {
-                                                MyUser myUser = MyUser.empty;
-                                                myUser = myUser.copywith(
-                                                  name: _nameCtrl.text.trim(),
-                                                  email: _emailCtrl.text.trim(),
-                                                );
-
-                                                setState(() {
-                                                  context
-                                                      .read<SignUpBloc>()
-                                                      .add(
-                                                        SignUpRequired(
-                                                          myUser,
-                                                          _passCtrl.text,
-                                                        ),
-                                                      );
-                                                });
-                                              }
-                                            },
+                                            onPressed: _submitForm,
                                           ),
                                         )
                                       : CircularProgressIndicator(),

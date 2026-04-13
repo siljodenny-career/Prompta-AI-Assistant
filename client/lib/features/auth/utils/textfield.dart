@@ -9,14 +9,20 @@ class PromptaField extends StatefulWidget {
   final TextInputType keyboardType;
   final TextEditingController controller;
   final String? Function(String?)? validator;
+  final FocusNode? focusNode;
+  final TextInputAction? textInputAction;
+  final void Function(String)? onFieldSubmitted;
 
-  const PromptaField({super.key, 
+  const PromptaField({super.key,
     required this.label,
     required this.icon,
     required this.controller,
     this.obscure = false,
     this.keyboardType = TextInputType.text,
     this.validator,
+    this.focusNode,
+    this.textInputAction,
+    this.onFieldSubmitted,
   });
 
   @override
@@ -54,8 +60,11 @@ class _PromptaFieldState extends State<PromptaField> {
         onFocusChange: (f) => setState(() => _focused = f),
         child: TextFormField(
           controller: widget.controller,
+          focusNode: widget.focusNode,
           obscureText: widget.obscure && !_showPass,
           keyboardType: widget.keyboardType,
+          textInputAction: widget.textInputAction,
+          onFieldSubmitted: widget.onFieldSubmitted,
           validator: widget.validator,
           style: GoogleFonts.dmSans(
             color: PromptaWelcomeTheme.textPrimary,

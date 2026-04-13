@@ -39,6 +39,8 @@ class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
 
   final _emailCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
+  final _emailFocus = FocusNode();
+  final _passFocus = FocusNode();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -119,10 +121,23 @@ class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
     _contentCtrl.dispose();
     _emailCtrl.dispose();
     _passCtrl.dispose();
+    _emailFocus.dispose();
+    _passFocus.dispose();
     super.dispose();
   }
 
   bool signInRequired = false;
+
+  void _submitForm() {
+    if (_formKey.currentState!.validate()) {
+      context.read<SignInBloc>().add(
+        SignInRequired(
+          _emailCtrl.text,
+          _passCtrl.text,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -272,7 +287,10 @@ class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
                                   label: 'Email address',
                                   icon: Icons.mail_outline_rounded,
                                   controller: _emailCtrl,
+                                  focusNode: _emailFocus,
                                   keyboardType: TextInputType.emailAddress,
+                                  textInputAction: TextInputAction.next,
+                                  onFieldSubmitted: (_) => _passFocus.requestFocus(),
                                   validator: (v) {
                                     if (v == null || v.isEmpty) return 'Enter a valid email';
                                     final emailRegex = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
@@ -289,7 +307,10 @@ class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
                                   label: 'Password',
                                   icon: Icons.lock_outline_rounded,
                                   controller: _passCtrl,
+                                  focusNode: _passFocus,
                                   obscure: true,
+                                  textInputAction: TextInputAction.done,
+                                  onFieldSubmitted: (_) => _submitForm(),
                                   validator: (v) {
                                     if (v == null || v.length < 6) return 'Min 6 characters';
                                     if (!RegExp(r'[A-Z]').hasMatch(v)) return 'Need at least one uppercase letter';
@@ -336,16 +357,7 @@ class _SignInPageState extends State<SignInPage> with TickerProviderStateMixin {
                                 FadeTransition(
                                   opacity: _f3,
                                   child: SubmitButton(
-                                    onPressed: () {
-                                      if (_formKey.currentState!.validate()) {
-                                        context.read<SignInBloc>().add(
-                                          SignInRequired(
-                                            _emailCtrl.text,
-                                            _passCtrl.text,
-                                          ),
-                                        );
-                                      }
-                                    },
+                                    onPressed: _submitForm,
                                     text: 'Sign In',
                                     icon: Icons.arrow_forward,
                                   ),
