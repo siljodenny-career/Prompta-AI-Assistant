@@ -48,37 +48,48 @@ class _MyAppViewState extends State<MyAppView> {
           themeMode: themeMode,
           home: _showSplash
               ? const _SplashScreen()
-              : BlocBuilder<AuthenticationBloc, AuthenticationState>(
-                  builder: (context, state) {
-                    if (state.status == AuthenticationStatus.authenticated) {
-                      context
-                          .read<ChatBloc>()
-                          .add(SetUserIdEvent(state.user!.uid));
-                      return _LoadingTransition(
-                        userId: state.user!.uid,
-                      );
-                    } else {
-                      return MultiBlocProvider(
-                        providers: [
-                          BlocProvider<SignInBloc>(
-                            create: (context) => SignInBloc(
-                              userRepository: context
-                                  .read<AuthenticationBloc>()
-                                  .userRepository,
-                            ),
-                          ),
-                          BlocProvider<SignUpBloc>(
-                            create: (context) => SignUpBloc(
-                              userRepository: context
-                                  .read<AuthenticationBloc>()
-                                  .userRepository,
-                            ),
-                          ),
-                        ],
-                        child: const AuthNavigator(),
-                      );
-                    }
+              : BlocListener<AuthenticationBloc, AuthenticationState>(
+                  listenWhen: (previous, current) =>
+                      previous.user?.uid != current.user?.uid,
+                  listener: (context, state) {
+                    final userId =
+                        state.status == AuthenticationStatus.authenticated
+                            ? state.user?.uid
+                            : null;
+                    context.read<ThemeCubit>().setUserId(userId);
                   },
+                  child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+                    builder: (context, state) {
+                      if (state.status == AuthenticationStatus.authenticated) {
+                        context
+                            .read<ChatBloc>()
+                            .add(SetUserIdEvent(state.user!.uid));
+                        return _LoadingTransition(
+                          userId: state.user!.uid,
+                        );
+                      } else {
+                        return MultiBlocProvider(
+                          providers: [
+                            BlocProvider<SignInBloc>(
+                              create: (context) => SignInBloc(
+                                userRepository: context
+                                    .read<AuthenticationBloc>()
+                                    .userRepository,
+                              ),
+                            ),
+                            BlocProvider<SignUpBloc>(
+                              create: (context) => SignUpBloc(
+                                userRepository: context
+                                    .read<AuthenticationBloc>()
+                                    .userRepository,
+                              ),
+                            ),
+                          ],
+                          child: const AuthNavigator(),
+                        );
+                      }
+                    },
+                  ),
                 ),
         );
       },
