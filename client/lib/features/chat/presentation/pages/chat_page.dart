@@ -17,7 +17,8 @@ import 'package:lottie/lottie.dart';
 import 'package:user_repository/user_repository.dart';
 
 class ChatPage extends StatefulWidget {
-  const ChatPage({super.key});
+  final bool isFirstTime;
+  const ChatPage({super.key, this.isFirstTime = false});
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -26,7 +27,8 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
-  final GlobalKey<PromptInputFieldState> _inputFieldKey = GlobalKey<PromptInputFieldState>();
+  final GlobalKey<PromptInputFieldState> _inputFieldKey =
+      GlobalKey<PromptInputFieldState>();
   String _searchQuery = '';
 
   @override
@@ -75,13 +77,16 @@ class _ChatPageState extends State<ChatPage> {
                                         itemCount: state.messages.length,
                                         itemBuilder: (context, index) {
                                           final isLast =
-                                              index == state.messages.length - 1;
+                                              index ==
+                                              state.messages.length - 1;
                                           return MessageBubble(
                                             message: state.messages[index],
                                             isLast: isLast,
                                             onRegenerate:
                                                 isLast &&
-                                                    !state.messages[index].isUser &&
+                                                    !state
+                                                        .messages[index]
+                                                        .isUser &&
                                                     !state.isLoading
                                                 ? () {
                                                     context.read<ChatBloc>().add(
@@ -92,48 +97,9 @@ class _ChatPageState extends State<ChatPage> {
                                           );
                                         },
                                       )
-                                    : Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Opacity(
-                                            opacity: 0.3,
-                                            child: Lottie.asset(
-                                              "assets/animations/infinity_loading.json",
-                                              width: ScreenConfig.screenWidth * 0.2,
-                                              repeat: true,
-                                              animate: true,
-                                              filterQuality: FilterQuality.high,
-                                            ),
-                                          ),
-                                          Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                "Start with your first prompt",
-                                                style: GoogleFonts.raleway(
-                                                  color: isDark
-                                                      ? Colors.white70
-                                                      : AppColors.lightTextPrimary,
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              ),
-                                              const SizedBox(height: 4),
-                                              Text(
-                                                "Ask anything, generate ideas, or explore with AI",
-                                                style: GoogleFonts.raleway(
-                                                  color: isDark
-                                                      ? Colors.white38
-                                                      : AppColors.lightTextSecondary,
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
+                                    : widget.isFirstTime
+                                    ? _FirstTimeEmptyState(isDark: isDark)
+                                    : _QuotesEmptyState(isDark: isDark),
                                 // Floating New Chat button overlay
                                 if (!state.userHasInteracted)
                                   Positioned(
@@ -141,15 +107,23 @@ class _ChatPageState extends State<ChatPage> {
                                     right: 0,
                                     child: FloatingActionButton.extended(
                                       onPressed: () {
-                                        context.read<ChatBloc>().add(NewChatEvent());
-                                        Future.delayed(const Duration(milliseconds: 100), () {
-                                          _inputFieldKey.currentState?.requestFocus();
-                                        });
+                                        context.read<ChatBloc>().add(
+                                          NewChatEvent(),
+                                        );
+                                        Future.delayed(
+                                          const Duration(milliseconds: 100),
+                                          () {
+                                            _inputFieldKey.currentState
+                                                ?.requestFocus();
+                                          },
+                                        );
                                       },
                                       icon: const Icon(Icons.auto_awesome),
                                       label: Text(
                                         'New Chat',
-                                        style: GoogleFonts.raleway(fontWeight: FontWeight.w600),
+                                        style: GoogleFonts.raleway(
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
                                       backgroundColor: const Color(0xFF5137E6),
                                       foregroundColor: Colors.white,
@@ -212,8 +186,8 @@ class _ChatPageState extends State<ChatPage> {
             return StreamBuilder<MyUser>(
               stream: userRepo.userDataStream(user.uid),
               builder: (context, snapshot) {
-                final name = (snapshot.data != null &&
-                        snapshot.data!.name.isNotEmpty)
+                final name =
+                    (snapshot.data != null && snapshot.data!.name.isNotEmpty)
                     ? snapshot.data!.name
                     : user.displayName ?? 'U';
                 final initials = _getInitials(name);
@@ -344,7 +318,9 @@ class _ChatPageState extends State<ChatPage> {
                         Text(
                           "AI powered assistant",
                           style: GoogleFonts.raleway(
-                            color: isDark ? Colors.white38 : AppColors.lightTextTertiary,
+                            color: isDark
+                                ? Colors.white38
+                                : AppColors.lightTextTertiary,
                             fontSize: 13,
                           ),
                         ),
@@ -373,9 +349,7 @@ class _ChatPageState extends State<ChatPage> {
                   prefixIcon: Icon(Icons.search, size: 18),
                   contentPadding: EdgeInsets.symmetric(vertical: 0),
                   filled: true,
-                  fillColor: isDark
-                      ? Colors.white12
-                      : AppColors.lightInputBg,
+                  fillColor: isDark ? Colors.white12 : AppColors.lightInputBg,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
                     borderSide: BorderSide.none,
@@ -407,9 +381,10 @@ class _ChatPageState extends State<ChatPage> {
                 final filtered = _searchQuery.isEmpty
                     ? state.threads
                     : state.threads
-                        .where((t) =>
-                            t.title.toLowerCase().contains(_searchQuery))
-                        .toList();
+                          .where(
+                            (t) => t.title.toLowerCase().contains(_searchQuery),
+                          )
+                          .toList();
 
                 if (filtered.isEmpty) {
                   return Center(
@@ -418,7 +393,9 @@ class _ChatPageState extends State<ChatPage> {
                           ? "No chat history yet"
                           : "No results found",
                       style: GoogleFonts.raleway(
-                        color: isDark ? Colors.white24 : AppColors.lightTextTertiary,
+                        color: isDark
+                            ? Colors.white24
+                            : AppColors.lightTextTertiary,
                         fontSize: 14,
                       ),
                     ),
@@ -470,7 +447,9 @@ class _ChatPageState extends State<ChatPage> {
                           _formatDate(thread.updatedAt),
                           style: GoogleFonts.dmSans(
                             fontSize: 11,
-                            color: isDark ? Colors.white24 : AppColors.lightTextTertiary,
+                            color: isDark
+                                ? Colors.white24
+                                : AppColors.lightTextTertiary,
                           ),
                         ),
                         onTap: () {
@@ -497,8 +476,8 @@ class _ChatPageState extends State<ChatPage> {
               return StreamBuilder<MyUser>(
                 stream: userRepo.userDataStream(user.uid),
                 builder: (context, snapshot) {
-                  final name = (snapshot.data != null &&
-                          snapshot.data!.name.isNotEmpty)
+                  final name =
+                      (snapshot.data != null && snapshot.data!.name.isNotEmpty)
                       ? snapshot.data!.name
                       : user.displayName ?? 'Guest User';
                   final initials = _getInitials(name);
@@ -531,13 +510,17 @@ class _ChatPageState extends State<ChatPage> {
                     icon: Icon(
                       Icons.person_outline_rounded,
                       size: 18,
-                      color: isDark ? Colors.white54 : AppColors.lightTextSecondary,
+                      color: isDark
+                          ? Colors.white54
+                          : AppColors.lightTextSecondary,
                     ),
                     label: Text(
                       'Edit Profile',
                       style: GoogleFonts.raleway(
                         fontSize: 14,
-                        color: isDark ? Colors.white54 : AppColors.lightTextSecondary,
+                        color: isDark
+                            ? Colors.white54
+                            : AppColors.lightTextSecondary,
                       ),
                     ),
                   ),
@@ -547,7 +530,7 @@ class _ChatPageState extends State<ChatPage> {
           ),
           const SizedBox(height: 8),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 14),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
             child: SizedBox(
               height: 36,
               width: double.infinity,
@@ -558,7 +541,11 @@ class _ChatPageState extends State<ChatPage> {
                 icon: Icon(Icons.logout_rounded, color: Colors.red[400]),
                 label: Text(
                   'Logout',
-                  style: GoogleFonts.raleway(color: Colors.red[400],fontWeight: FontWeight.w700,fontSize: 16),
+                  style: GoogleFonts.raleway(
+                    color: Colors.red[400],
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                  ),
                 ),
                 style: OutlinedButton.styleFrom(
                   side: BorderSide(color: Colors.red.shade400, width: 1.5),
@@ -585,8 +572,7 @@ class _ChatPageState extends State<ChatPage> {
           CircleAvatar(
             radius: 16,
             backgroundColor: const Color(0xFF5137E6),
-            backgroundImage:
-                imageUrl != null ? NetworkImage(imageUrl) : null,
+            backgroundImage: imageUrl != null ? NetworkImage(imageUrl) : null,
             child: imageUrl == null
                 ? Text(
                     initials,
@@ -705,6 +691,169 @@ class _AvatarChipState extends State<_AvatarChip> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+// Simple empty state for first-time users
+class _FirstTimeEmptyState extends StatelessWidget {
+  final bool isDark;
+  const _FirstTimeEmptyState({required this.isDark});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Lottie.asset(
+            "assets/animations/infinity_loading.json",
+            width: 140,
+            height: 140,
+            repeat: true,
+            animate: true,
+            filterQuality: FilterQuality.high,
+          ),
+          const SizedBox(height: 32),
+          Text(
+            "Start with your first prompt",
+            textAlign: TextAlign.center,
+            style: GoogleFonts.raleway(
+              color: isDark ? Colors.white : AppColors.lightTextPrimary,
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            "Ask anything, generate ideas, or explore with AI",
+            textAlign: TextAlign.center,
+            style: GoogleFonts.raleway(
+              color: isDark ? Colors.white54 : AppColors.lightTextSecondary,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Animated rotating quotes for returning users
+class _QuotesEmptyState extends StatefulWidget {
+  final bool isDark;
+  const _QuotesEmptyState({required this.isDark});
+
+  @override
+  State<_QuotesEmptyState> createState() => _QuotesEmptyStateState();
+}
+
+class _QuotesEmptyStateState extends State<_QuotesEmptyState>
+    with SingleTickerProviderStateMixin {
+  final List<String> _quotes = [
+    "From thought to solution.",
+    "Turn your ideas into intelligent conversations.",
+    "Think it. Prompt it.",
+    "Ask better. Get smarter.",
+  ];
+
+  late AnimationController _controller;
+  late Animation<double> _fadeAnimation;
+  int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 3000),
+    );
+
+    _fadeAnimation = TweenSequence<double>([
+      TweenSequenceItem(
+        tween: Tween(
+          begin: 0.0,
+          end: 1.0,
+        ).chain(CurveTween(curve: Curves.easeIn)),
+        weight: 20,
+      ),
+      TweenSequenceItem(
+        tween: ConstantTween(1.0),
+        weight: 60,
+      ),
+      TweenSequenceItem(
+        tween: Tween(
+          begin: 1.0,
+          end: 0.0,
+        ).chain(CurveTween(curve: Curves.easeOut)),
+        weight: 20,
+      ),
+    ]).animate(_controller);
+
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        setState(() {
+          _currentIndex = (_currentIndex + 1) % _quotes.length;
+        });
+        _controller.forward(from: 0.0);
+      }
+    });
+
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Lottie.asset(
+            "assets/animations/infinity_loading.json",
+            width: 100,
+            height: 100,
+            repeat: true,
+            animate: true,
+            filterQuality: FilterQuality.high,
+          ),
+
+          AnimatedBuilder(
+            animation: _fadeAnimation,
+            builder: (context, child) {
+              return Opacity(
+                opacity: _fadeAnimation.value,
+                child: SizedBox(
+                  height: 60,
+                  child: Center(
+                    child: Text(
+                      _quotes[_currentIndex],
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.raleway(
+                        color: widget.isDark
+                            ? Colors.white
+                            : AppColors.lightTextPrimary,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        height: 1.4,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 8),
+        ],
       ),
     );
   }

@@ -264,7 +264,7 @@ class _LoadingTransitionState extends State<_LoadingTransition> {
       create: (context) => SignInBloc(
         userRepository: context.read<AuthenticationBloc>().userRepository,
       ),
-      child: const ChatPage(),
+      child: ChatPage(isFirstTime: _showOnboarding!),
     );
   }
 }

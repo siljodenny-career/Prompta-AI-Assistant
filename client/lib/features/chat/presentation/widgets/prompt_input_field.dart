@@ -115,6 +115,7 @@ class PromptInputFieldState extends State<PromptInputField> {
                     focusNode: _focusNode,
                     style: GoogleFonts.raleway(
                       color: isDark ? Colors.white60 : AppColors.lightTextPrimary,
+                      fontSize: 16,
                     ),
                     textCapitalization: TextCapitalization.sentences,
                     controller: _controller,

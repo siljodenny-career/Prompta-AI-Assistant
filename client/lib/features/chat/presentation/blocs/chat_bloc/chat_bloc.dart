@@ -56,17 +56,20 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   void _onThreadsUpdated(_ThreadsUpdatedEvent event, Emitter<ChatState> emit) {
     final hasThreads = event.threads.isNotEmpty;
     final noThreadLoaded = _currentThreadId == null;
-    
+
     // Auto-load latest thread on initial load when no thread is selected
-    if (hasThreads && noThreadLoaded && _messages.isEmpty) {
+    // Skip auto-load if user has interacted to prevent race condition with new chat
+    if (hasThreads && noThreadLoaded && _messages.isEmpty && !state.userHasInteracted) {
       final latestThread = event.threads.first;
       _currentThreadId = latestThread.id;
       // Emit threads first, then load messages asynchronously
-      emit(state.copyWith(state.messages, true, 
+      emit(state.copyWith(state.messages, true,
           threads: event.threads, currentThreadId: _currentThreadId));
-      
+
       // Load messages asynchronously
       _firestoreService.getMessages(latestThread.id).then((messages) {
+        // Clear messages first to prevent duplicates in race conditions
+        _messages.clear();
         _messages.addAll(messages);
         if (!isClosed) {
           add(_MessagesLoadedEvent(List.unmodifiable(_messages)));
